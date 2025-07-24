@@ -52,7 +52,7 @@ const NeuralNetwork = () => {
       <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
         {/* Connections */}
         {nodes.map((node, i) =>
-          nodes.slice(i + 1).map((otherNode, j) => {
+          nodes.slice(i + 1).map((otherNode) => {
             const distance = Math.sqrt(Math.pow(node.x - otherNode.x, 2) + Math.pow(node.y - otherNode.y, 2))
             if (distance < 25) {
               return (
@@ -190,15 +190,15 @@ export default function Home() {
   }
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.9 },
+    hidden: { opacity: 0, y: 50, scale: 0.9 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
       transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 20,
+        type: "spring" as const,
+        stiffness: 100,
+        damping: 15,
       },
     },
   }
@@ -402,7 +402,7 @@ export default function Home() {
           initial="hidden"
           animate="visible"
         >
-          {questionConfig.map(({ key, color, icon: Icon }, index) => (
+          {questionConfig.map(({ key, color, icon: Icon }) => (
             <motion.button
               key={key}
               onClick={() => goToChat(questions[key])}
