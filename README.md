@@ -17,7 +17,7 @@ So I built a truly conversational portfolio powered by Google's Gemini AI. Inste
 
 This is not a portfolio. It's a **conversation tailored to your curiosity**.
 
-➡️ **Try it live:** [Your Portfolio URL Here](https://ai-portfolio-main.netlify.app)  
+➡️ **Try it live:** [Portfolio URL](https://ai-portfolio-main.netlify.app)  
 *What will you ask?*
 
 ---
@@ -143,12 +143,6 @@ Users can ask about:
 
 ## 🚢 Deployment
 
-### Vercel (Recommended)
-1. Push code to GitHub
-2. Connect repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy automatically
-
 ### Netlify
 1. Build command: `npm run build`
 2. Publish directory: `.next`
@@ -227,7 +221,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🙏 Acknowledgments
 
 * **Google Gemini AI** for powerful conversational capabilities
-* **Vercel/Netlify** for seamless deployment
+* **Netlify** for seamless deployment
 * **Next.js Team** for the amazing framework
 * **Tailwind CSS** for beautiful styling utilities
 * **Framer Motion** for smooth animations
@@ -237,9 +231,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📞 Contact
 
 **Ansh Agrawal**
-* 📧 Email: [your-email@example.com](mailto:anshagrawal148.com)
-* 💼 LinkedIn: [linkedin.com/in/ansh-agrawal](https://www.linkedin.com/in/ansh-agrawal-a69866298/)
-* 🐙 GitHub: [github.com/AnshAggr1303](https://github.com/AnshAggr1303)
+* 📧 Email: [my mail](mailto:anshagrawal148.com)
+* 💼 LinkedIn: [my linkedIN](https://www.linkedin.com/in/ansh-agrawal-a69866298/)
+* 🐙 GitHub: [my github](https://github.com/AnshAggr1303)
 
 ---
 
