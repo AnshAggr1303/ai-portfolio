@@ -9,8 +9,7 @@ interface ChatInputProps {
   showQuickQuestions: boolean;
   setShowQuickQuestions: (show: boolean) => void;
   handleSendMessage: (messageContent?: string) => void;
-  handleKeyPress: (e: React.KeyboardEvent) => void;
-  textareaRef: React.RefObject<HTMLInputElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>; // Fixed: Changed from HTMLInputElement to HTMLTextAreaElement
   isToolInProgress?: boolean;
   stop?: () => void;
 }
@@ -22,12 +21,11 @@ export default function ChatInput({
   showQuickQuestions,
   setShowQuickQuestions,
   handleSendMessage,
-  handleKeyPress,
   textareaRef,
   isToolInProgress = false,
   stop,
 }: ChatInputProps) {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => { // Fixed: Changed from HTMLInputElement to HTMLTextAreaElement
     if (
       e.key === 'Enter' &&
       !e.nativeEvent.isComposing &&
@@ -101,17 +99,17 @@ export default function ChatInput({
         {/* Input Field */}
         <form onSubmit={handleSubmit} className="relative w-full">
           <div className="mx-auto flex items-center rounded-full border border-[#E5E5E9] bg-[#ECECF0] py-2 pr-2 pl-6">
-            <input
+            <textarea
               ref={textareaRef}
-              type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={
                 isToolInProgress ? 'Tool is in progress...' : 'Ask me anything'
               }
-              className="text-md w-full border-none bg-transparent text-black placeholder:text-gray-500 focus:outline-none"
+              className="text-md w-full border-none bg-transparent text-black placeholder:text-gray-500 focus:outline-none resize-none"
               disabled={isToolInProgress || isLoading}
+              rows={1}
             />
             <button
               type="submit"

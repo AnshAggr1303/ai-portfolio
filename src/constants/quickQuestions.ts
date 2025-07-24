@@ -16,9 +16,39 @@ export const questions = {
 } as const;
 
 export const categoryButtons = [
-  { key: 'Me', color: '#329696', icon: Laugh },
-  { key: 'Projects', color: '#3E9858', icon: Briefcase },
-  { key: 'Skills', color: '#856ED9', icon: Layers },
-  { key: 'Fun', color: '#B95F9D', icon: PartyPopper },
-  { key: 'Contact', color: '#C19433', icon: User2 },
+  { 
+    key: 'Me', 
+    color: '#329696', 
+    icon: Laugh,
+    label: 'About Me',
+    prompt: questions.Me
+  },
+  { 
+    key: 'Projects', 
+    color: '#3E9858', 
+    icon: Briefcase,
+    label: 'Projects',
+    prompt: questions.Projects
+  },
+  { 
+    key: 'Skills', 
+    color: '#856ED9', 
+    icon: Layers,
+    label: 'Skills',
+    prompt: questions.Skills
+  },
+  { 
+    key: 'Fun', 
+    color: '#B95F9D', 
+    icon: PartyPopper,
+    label: 'Fun Facts',
+    prompt: questions.Fun
+  },
+  { 
+    key: 'Contact', 
+    color: '#C19433', 
+    icon: User2,
+    label: 'Contact',
+    prompt: questions.Contact
+  },
 ] as const;

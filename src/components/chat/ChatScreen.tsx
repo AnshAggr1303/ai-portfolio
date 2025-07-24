@@ -12,7 +12,6 @@ interface ChatScreenProps {
   setShowQuickQuestions: (show: boolean) => void;
   handleBackClick: () => void;
   handleSendMessage: (messageContent?: string) => void;
-  handleKeyPress: (e: React.KeyboardEvent) => void;
   messagesEndRef: React.RefObject<HTMLDivElement>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
 }
@@ -26,7 +25,6 @@ export default function ChatScreen({
   setShowQuickQuestions,
   handleBackClick,
   handleSendMessage,
-  handleKeyPress,
   messagesEndRef,
   textareaRef,
 }: ChatScreenProps) {
@@ -58,7 +56,6 @@ export default function ChatScreen({
         showQuickQuestions={showQuickQuestions}
         setShowQuickQuestions={setShowQuickQuestions}
         handleSendMessage={handleSendMessage}
-        handleKeyPress={handleKeyPress}
         textareaRef={textareaRef}
       />
     </div>

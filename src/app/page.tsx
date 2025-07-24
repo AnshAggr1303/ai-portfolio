@@ -344,7 +344,7 @@ export default function Home() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
         >
-          Hey, I'm Ansh 👋
+          Hey, I&apos;m Ansh 👋
         </motion.h2>
 
         {/* Original AI Portfolio animation */}

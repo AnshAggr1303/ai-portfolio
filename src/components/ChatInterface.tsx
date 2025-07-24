@@ -291,13 +291,6 @@ export default function ChatInterface() {
     }
   }, [searchParams, initialized, processMessage]);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   return (
     <ChatScreen
       messages={messages}
@@ -308,7 +301,6 @@ export default function ChatInterface() {
       setShowQuickQuestions={setShowQuickQuestions}
       handleBackClick={handleBackClick}
       handleSendMessage={handleSendMessage}
-      handleKeyPress={handleKeyPress}
       messagesEndRef={messagesEndRef}
       textareaRef={textareaRef}
     />
