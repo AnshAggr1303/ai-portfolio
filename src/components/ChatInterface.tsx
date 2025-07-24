@@ -28,10 +28,6 @@ export default function ChatInterface() {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
-  const handleBackClick = () => {
-    router.push('/');
-  };
-
   const isProjectsQuery = (message: string): boolean => {
     const projectKeywords = ['project', 'projects', 'work', 'portfolio', 'built', 'created', 'developed', 'app', 'website'];
     return projectKeywords.some(keyword => message.toLowerCase().includes(keyword));
@@ -53,13 +49,18 @@ export default function ChatInterface() {
   };
 
   const isResumeQuery = (message: string): boolean => {
-    const resumeKeywords = ['resume', 'cv', 'curriculum vitae', 'download resume', 'download cv', 'your resume', 'your cv'];
+    const resumeKeywords = ['resume', 'cv', 'curriculum vitae', 'download resume', 'download cv', 'your resume', 'your cv', 'can i see your resume', 'show me your resume'];
     return resumeKeywords.some(keyword => message.toLowerCase().includes(keyword));
   };
 
   const isFunQuery = (message: string): boolean => {
     const funKeywords = ['trek', 'trekking', 'kedarnath', 'adventure', 'hiking', 'mountains', 'travel', 'crazy', 'craziest', 'fun photos', 'personal life', 'hobbies', 'fun', 'wildest', 'most adventurous', 'coolest thing', 'exciting', 'memorable'];
     return funKeywords.some(keyword => message.toLowerCase().includes(keyword));
+  };
+
+  const isMoreQuery = (message: string): boolean => {
+    const moreKeywords = ['more options', 'show me more', 'what else', 'additional', 'other questions', 'more'];
+    return moreKeywords.some(keyword => message.toLowerCase().includes(keyword));
   };
 
   const processMessage = useCallback(async (content: string, chatHistory: Message[] = []) => {
@@ -75,7 +76,7 @@ export default function ChatInterface() {
 
     try {
       let responseContent = '';
-      let messageType: 'profile' | 'projects' | 'skills' | 'contact' | 'resume' | 'fun' | undefined;
+      let messageType: 'profile' | 'projects' | 'skills' | 'contact' | 'resume' | 'fun' | 'more' | undefined;
 
       // Check for profile queries
       if (isProfileQuery(content)) {
@@ -200,6 +201,22 @@ export default function ChatInterface() {
           setMessages(prev => [...prev, followUpMessage]);
         }, 1000);
       }
+      // Check for more queries
+      else if (isMoreQuery(content)) {
+        responseContent = 'Here are more things you can ask me about:';
+        messageType = 'more';
+        
+        setTimeout(() => {
+          const followUpMessage: Message = {
+            id: generateUniqueId(),
+            role: 'assistant',
+            content: "Feel free to click on any of the topics above to learn more about me! 😊 I'm here to answer any questions you might have.\n\nWhat interests you the most?",
+            timestamp: new Date()
+          };
+
+          setMessages(prev => [...prev, followUpMessage]);
+        }, 1000);
+      }
       // Regular API call
       else {
         try {
@@ -245,7 +262,7 @@ export default function ChatInterface() {
       setIsLoading(false);
       processingRef.current.delete(content);
     }
-  }, []);
+  }, [isLoading]);
 
   const handleSendMessage = useCallback(async (messageContent?: string) => {
     const content = messageContent || inputValue.trim();
@@ -299,10 +316,10 @@ export default function ChatInterface() {
       isLoading={isLoading}
       showQuickQuestions={showQuickQuestions}
       setShowQuickQuestions={setShowQuickQuestions}
-      handleBackClick={handleBackClick}
       handleSendMessage={handleSendMessage}
       messagesEndRef={messagesEndRef}
       textareaRef={textareaRef}
+      onSendMessage={handleSendMessage}
     />
   );
 }

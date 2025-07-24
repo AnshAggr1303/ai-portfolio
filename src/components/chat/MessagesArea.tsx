@@ -7,17 +7,20 @@ import Contact from '../ui/contact';
 import Resume from '../ui/resume';
 import Crazy from '../ui/crazy';
 import { Message } from '../../types/chat';
+import { moreQuestions } from '../../constants/quickQuestions';
 
 interface MessagesAreaProps {
   messages: Message[];
   isLoading: boolean;
   messagesEndRef: React.RefObject<HTMLDivElement>;
+  onSendMessage: (message: string) => void;
 }
 
 export default function MessagesArea({
   messages,
   isLoading,
   messagesEndRef,
+  onSendMessage,
 }: MessagesAreaProps) {
   
   // Helper function to determine if chat icon should be shown
@@ -72,7 +75,7 @@ export default function MessagesArea({
                   message.role === 'assistant' && <div className="w-8 h-8 flex-shrink-0"></div>
                 )}
                 
-                <div className={`${message.type && ['profile', 'skills', 'contact', 'resume', 'fun'].includes(message.type) ? 'w-full' : 'max-w-[80%]'} flex flex-col ${message.role === 'user' ? 'items-end' : 'items-start'}`}>
+                <div className={`${message.type && ['profile', 'skills', 'contact', 'resume', 'fun', 'projects', 'more'].includes(message.type) ? 'w-full' : 'max-w-[80%]'} flex flex-col ${message.role === 'user' ? 'items-end' : 'items-start'}`}>
                   <div className={`px-6 py-3 rounded-2xl ${
                     message.role === 'user'
                       ? 'bg-blue-600 text-white'
@@ -83,6 +86,10 @@ export default function MessagesArea({
                   
                   {message.type === 'projects' && (
                     <div className="mt-6 w-full">
+                      {/* Add the header from AllProjects.tsx */}
+                      <h2 className="max-w-7xl mx-auto text-xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-200 font-sans mb-6">
+                        My Projects
+                      </h2>
                       <Carousel
                         items={projectData.map((card, index) => (
                           <Card key={index} card={card} index={index} layout />
@@ -118,6 +125,27 @@ export default function MessagesArea({
                   {message.type === 'fun' && (
                     <div className="mt-6 w-full">
                       <Crazy />
+                    </div>
+                  )}
+
+                  {message.type === 'more' && (
+                    <div className="mt-6 w-full">
+                      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">What would you like to know more about?</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {moreQuestions.map((item) => (
+                            <button
+                              key={item.id}
+                              onClick={() => onSendMessage(item.question)}
+                              className="text-left p-3 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group"
+                            >
+                              <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600">
+                                {item.label}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>

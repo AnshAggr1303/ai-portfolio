@@ -29,15 +29,15 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face';
 
   return (
-    <div className="mx-auto w-full max-w-5xl py-6 font-sans">
-      <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
+    <div className="mx-auto w-full max-w-5xl py-4 font-inter">
+      <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-2">
+
         {/* Image section */}
         <div className="relative mx-auto aspect-square w-full max-w-sm">
-          <div className="relative h-full w-full overflow-hidden rounded-2xl border-2 border-gray-100 shadow-lg bg-white">
+          <div className="relative h-full w-full overflow-hidden rounded-2xl shadow-lg bg-white">
             <div
               className="h-full w-full"
               style={{
-                transform: 'scale(0.92)',
                 opacity: 0,
                 animation: 'scaleIn 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards',
               }}
@@ -61,7 +61,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         </div>
 
         {/* Text content section */}
-        <div className="flex flex-col space-y">
+        <div className="flex flex-col space-y-2">
           <div
             style={{
               opacity: 0,
@@ -69,32 +69,36 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
               animation: 'fadeInUp 0.6s ease-out forwards',
             }}
           >
-            <h1 className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-xl font-semibold text-transparent md:text-3xl">
+            <h1 className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-2xl font-bold text-transparent md:text-3xl tracking-tight leading-tight">
               {name}
             </h1>
             <div className="mt-1 flex flex-col gap-1 md:flex-row md:items-center md:gap-4">
-              <p className="text-gray-600">{age} years old</p>
+              <p className="text-gray-600 font-medium text-sm">{age} years old</p>
               <div className="bg-gray-300 hidden h-1.5 w-1.5 rounded-full md:block" />
-              <p className="text-gray-600">{location}</p>
+              <p className="text-gray-600 font-medium text-sm">{location}</p>
             </div>
-            <p className="text-gray-700 mt-2 text-base font-medium">{title}</p>
-            <p className="text-gray-500 text-sm">{company}</p>
+            <p className="text-gray-800 mt-1 text-base font-semibold">{title}</p>
+            <p className="text-gray-500 text-sm mt-0.5 font-medium">{company}</p>
           </div>
 
-          <p
-            className="text-gray-900 mt-6 leading-relaxed whitespace-pre-line"
+          <div
+            className="text-gray-800 mt-3 leading-relaxed font-medium text-sm"
             style={{
               opacity: 0,
               transform: 'translateY(20px)',
               animation: 'fadeInUp 0.6s ease-out 0.2s forwards',
             }}
           >
-            {bio}
-          </p>
+            {bio.split('\n\n').map((paragraph, index) => (
+              <p key={index} className={index > 0 ? 'mt-2' : ''}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
 
           {/* Tags/Keywords */}
           <div
-            className="mt-4 flex flex-wrap gap-2"
+            className="mt-3 flex flex-wrap gap-1.5"
             style={{
               opacity: 0,
               animation: 'fadeIn 0.5s ease-out 0.6s forwards',
@@ -103,7 +107,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="bg-gray-100 text-gray-700 rounded-full px-3 py-1 text-sm"
+                className="bg-gray-100 text-gray-700 rounded-full px-2.5 py-1 text-xs font-medium hover:bg-gray-200 transition-colors"
               >
                 {tag}
               </span>
@@ -113,6 +117,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       </div>
 
       <style jsx>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        .font-inter {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+
         @keyframes scaleIn {
           to {
             transform: scale(1);

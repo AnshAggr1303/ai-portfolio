@@ -9,9 +9,7 @@ interface ChatInputProps {
   showQuickQuestions: boolean;
   setShowQuickQuestions: (show: boolean) => void;
   handleSendMessage: (messageContent?: string) => void;
-  textareaRef: React.RefObject<HTMLTextAreaElement>; // Fixed: Changed from HTMLInputElement to HTMLTextAreaElement
-  isToolInProgress?: boolean;
-  stop?: () => void;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
 }
 
 export default function ChatInput({
@@ -22,14 +20,11 @@ export default function ChatInput({
   setShowQuickQuestions,
   handleSendMessage,
   textareaRef,
-  isToolInProgress = false,
-  stop,
 }: ChatInputProps) {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => { // Fixed: Changed from HTMLInputElement to HTMLTextAreaElement
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (
       e.key === 'Enter' &&
       !e.nativeEvent.isComposing &&
-      !isToolInProgress &&
       inputValue.trim()
     ) {
       e.preventDefault();
@@ -39,7 +34,7 @@ export default function ChatInput({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isToolInProgress && inputValue.trim()) {
+    if (inputValue.trim()) {
       handleSendMessage();
     }
   };
@@ -51,78 +46,76 @@ export default function ChatInput({
   }, [textareaRef]);
 
   return (
-    <div className="flex-shrink-0 bg-gray-50 border-t-0">
-      <div className="max-w-3xl mx-auto px-4 py-4">
+    <div className="flex-shrink-0">
+      <div className="max-w-4xl mx-auto px-4 py-4">
         {/* Quick Questions */}
         {showQuickQuestions && (
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-gray-600">Quick questions</span>
+          <div className="mb-6">
+            <div className="flex justify-center mb-4">
               <button
                 onClick={() => setShowQuickQuestions(false)}
-                className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 transition-colors px-2 py-1 rounded hover:bg-gray-100/50"
+                className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50"
               >
-                <ChevronUp className="w-3 h-3" />
-                Hide
+                <ChevronUp className="w-4 h-4" />
+                Hide quick questions
               </button>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {categoryButtons.map((category, index) => {
-                const IconComponent = category.icon;
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleSendMessage(category.prompt)}
-                    className="flex items-center gap-2 px-3 py-2 bg-white/70 hover:bg-white border border-gray-200/50 hover:border-gray-300 rounded-xl transition-all duration-200 text-sm group shadow-sm"
-                  >
-                    <IconComponent className="w-4 h-4 text-gray-600 group-hover:text-gray-800" />
-                    <span className="text-gray-700 group-hover:text-gray-900">{category.label}</span>
-                  </button>
-                );
-              })}
+            <div className="flex justify-center">
+              <div className="flex flex-wrap gap-2 justify-center max-w-3xl">
+                {categoryButtons.map((category, index) => {
+                  const IconComponent = category.icon;
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleSendMessage(category.prompt)}
+                      className="flex items-center gap-2 px-3 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 rounded-xl transition-all duration-200 text-sm group shadow-sm"
+                    >
+                      <IconComponent 
+                        className="w-4 h-4 flex-shrink-0"
+                        style={{ color: category.color }}
+                      />
+                      <span className="text-gray-700 group-hover:text-gray-900 font-medium whitespace-nowrap">
+                        {category.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
         
         {!showQuickQuestions && (
-          <div className="mb-4 flex justify-center">
+          <div className="mb-6 flex justify-center">
             <button
               onClick={() => setShowQuickQuestions(true)}
-              className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 transition-colors px-3 py-2 rounded-xl hover:bg-white/50"
+              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors px-4 py-2 rounded-lg hover:bg-gray-50"
             >
-              <ChevronDown className="w-3 h-3" />
+              <ChevronDown className="w-4 h-4" />
               Show quick questions
             </button>
           </div>
         )}
 
         {/* Input Field */}
-        <form onSubmit={handleSubmit} className="relative w-full">
-          <div className="mx-auto flex items-center rounded-full border border-[#E5E5E9] bg-[#ECECF0] py-2 pr-2 pl-6">
+        <form onSubmit={handleSubmit} className="relative w-full max-w-2xl mx-auto">
+          <div className="flex items-center rounded-full border border-gray-200 bg-white py-2 pr-2 pl-6 shadow-sm">
             <textarea
               ref={textareaRef}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={
-                isToolInProgress ? 'Tool is in progress...' : 'Ask me anything'
-              }
-              className="text-md w-full border-none bg-transparent text-black placeholder:text-gray-500 focus:outline-none resize-none"
-              disabled={isToolInProgress || isLoading}
+              placeholder="Ask me anything"
+              className="text-md w-full border-none bg-transparent text-gray-900 placeholder:text-gray-400 focus:outline-none resize-none"
+              disabled={isLoading}
               rows={1}
             />
             <button
               type="submit"
-              disabled={isLoading || !inputValue.trim() || isToolInProgress}
-              className="flex items-center justify-center rounded-full bg-[#0171E3] p-2 text-white disabled:opacity-50"
-              onClick={(e) => {
-                if (isLoading && stop) {
-                  e.preventDefault();
-                  stop();
-                }
-              }}
+              disabled={isLoading || !inputValue.trim()}
+              className="flex items-center justify-center rounded-full bg-[#0171E3] p-2 text-white disabled:opacity-50 hover:bg-[#0157C2] transition-colors"
             >
-              <ArrowUp className="h-6 w-6" />
+              <ArrowUp className="h-5 w-5" />
             </button>
           </div>
         </form>

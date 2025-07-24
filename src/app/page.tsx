@@ -395,7 +395,7 @@ export default function Home() {
           </motion.div>
         </form>
 
-        {/* Enhanced quick-question grid with 3D effects */}
+        {/* Enhanced quick-question grid with 3D effects - Now without More option */}
         <motion.div
           className="w-full max-w-4xl grid grid-cols-2 md:grid-cols-5 gap-4"
           variants={containerVariants}
