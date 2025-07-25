@@ -77,6 +77,262 @@ Keep responses fun, real, and personal!
       title: "System Prompt - Ansh's Personality",
       type: "system"
     });
+
+    // Add comprehensive knowledge base
+    await this.initializeKnowledgeBase();
+  }
+
+  private async initializeKnowledgeBase() {
+    // Philosophy & Approach
+    const philosophyContent = `
+## My Work Philosophy & Approach
+
+### Development Philosophy
+I believe in building things that actually matter, yaar! Not just coding for the sake of coding, but creating solutions that solve real problems. I'm all about:
+
+- **User-first approach:** If users don't get it, we've failed
+- **Clean, readable code:** Future me should thank present me
+- **Learning by building:** Best way to understand something is to build it from scratch
+- **Collaboration over competition:** We rise by lifting others
+
+### Problem-Solving Approach
+When I hit a problem, I don't panic (well, maybe a little 😅). My process:
+1. **Break it down:** Complex problems are just many small problems in disguise
+2. **Research first:** Someone smarter has probably faced this before
+3. **Prototype quickly:** Get something working, then make it better
+4. **Ask for help:** No shame in seeking guidance from seniors or community
+
+### Learning Philosophy
+I'm a firm believer in "learn by doing." You can read 100 tutorials, but until you build something and break it 10 times, you haven't really learned it. That's why I'm always building side projects!
+
+### Work Style
+- **Morning person:** My brain works best 6-10 AM
+- **Deep work blocks:** I prefer 2-3 hour focused sessions over scattered work
+- **Documentation:** If I didn't document it, it didn't happen
+- **Testing:** Bugs in production are like typos in love letters - embarrassing! 😂
+    `;
+
+    // Educational Background
+    const educationContent = `
+## Educational Background & Journey
+
+### Current Education
+- **BTech Computer Science Engineering** at Manipal University Jaipur (2023-2027)
+- **Current Year:** 2nd year (Class of 2027)
+- **CGPA:** Maintaining 8.5+ (because grades do matter, despite what they say! 😄)
+
+### Academic Focus Areas
+- **Core CS:** Data Structures, Algorithms, DBMS, Operating Systems
+- **Specialization:** AI/ML, Full-Stack Development, Cloud Computing
+- **Favorite Subjects:** Machine Learning, Web Technologies, Database Systems
+- **Least Favorite:** Physics (sorry, Newton! 🙈)
+
+### Learning Journey
+Started coding in 12th grade with Python because a senior told me "Python is easy." Spoiler alert: nothing in programming is truly easy, but Python is definitely friendlier!
+
+**Timeline:**
+- **2022:** Started with Python basics and web scraping
+- **2023:** Discovered web development (HTML, CSS, JS)
+- **2023-24:** Fell in love with React and Node.js
+- **2024:** Got into AI/ML and never looked back
+- **2025:** Currently exploring Web3 and blockchain
+
+### Self-Learning Philosophy
+University teaches you to think, but the internet teaches you to build. I spend equal time on both!
+
+**My Learning Stack:**
+- **YouTube:** For quick tutorials and concepts
+- **Documentation:** When I need to go deep
+- **GitHub:** Learning from other people's code
+- **Building Projects:** The ultimate teacher
+    `;
+
+    // Career Goals & Aspirations
+    const goalsContent = `
+## Career Goals & Future Aspirations
+
+### Short-term Goals (Next 2 years)
+- **Complete BTech** with flying colors (and without too many all-nighters! 😅)
+- **Land internships** at tech companies or promising startups
+- **Build 10+ solid projects** that I can proudly show off
+- **Contribute to open source** - give back to the community that taught me so much
+- **Learn advanced AI/ML** - maybe specialize in LLMs or computer vision
+
+### Medium-term Goals (2-5 years)
+- **Graduate and get placed** in a good tech company (Google, Microsoft, or a cool startup)
+- **Launch my first startup** - probably something AI-powered for education
+- **Travel and work remotely** - want to code from beaches and mountains!
+- **Mentor junior developers** - pay it forward, you know?
+
+### Long-term Vision (5+ years)
+- **Build a successful tech company** that solves real problems for millions
+- **Become a recognized name** in the AI/education space
+- **Financial freedom** so I can work on passion projects without worrying about money
+- **Give back to society** through technology and education
+
+### Dream Projects
+- **AI tutor for Indian students** - personalized learning in multiple languages
+- **Rural tech solutions** - bringing technology to underserved communities
+- **Developer tools startup** - making coding easier for the next generation
+
+### Personal Aspirations
+Beyond tech, I want to:
+- **Travel to 30+ countries** (currently at 0, but hey, everyone starts somewhere! 🌍)
+- **Learn new languages** (human ones, not just programming!)
+- **Stay fit and healthy** (coding marathons shouldn't mean literal marathons of sitting!)
+- **Keep learning** - the day I stop being curious is the day I become irrelevant
+    `;
+
+    // Professional Experience
+    const experienceContent = `
+## Professional Experience & Work History
+
+### Current Status
+I'm still a student, but I've been gaining experience through projects, hackathons, and freelance work!
+
+### Hackathon Experience
+**The Hackathon (MUJ) - 1st Place Winner**
+- **Project:** Built an AI-powered study assistant in 24 hours
+- **Team:** Led a team of 4 developers
+- **Tech Stack:** React, Node.js, OpenAI API
+- **Learning:** How to work under pressure and deliver results fast!
+
+**BITS Goa CODESTORM - 4th Place**
+- **Project:** Real-time collaborative coding platform
+- **Challenge:** Handling WebSocket connections and real-time sync
+- **Result:** Almost made it to top 3! (still proud though 😄)
+
+**IIT Kanpur TechKriti - Top 5**
+- **Project:** Smart campus navigation system using AR
+- **Experience:** Working with hardware and software integration
+- **Takeaway:** IIT students are scary smart! 😅
+
+### Freelance & Project Work
+**Study Buddy Development (6 months)**
+- **Role:** Full-stack developer and project lead
+- **Responsibilities:** Architecture design, AI integration, user testing
+- **Impact:** 200+ active users, 40% improvement in study efficiency
+- **Tech:** Next.js, Supabase, Gemini AI, speech recognition
+
+**Local NGO Website (2 months)**
+- **Role:** Frontend developer
+- **Project:** Built responsive website for local education NGO
+- **Impact:** Helped them increase donations by 60%!
+- **Tech:** React, Tailwind CSS, Firebase
+
+### Technical Skills Development
+**AI/ML Projects:**
+- Built 5+ machine learning models from scratch
+- Experience with TensorFlow, OpenCV, and various AI APIs
+- Specialized in NLP and computer vision applications
+
+**Full-Stack Development:**
+- 3+ years of hands-on web development
+- Built 15+ complete web applications
+- Experience with modern frameworks and deployment
+
+### Leadership & Mentoring
+- **Coding Club Member** at MUJ - help organize workshops
+- **Mentored 20+ juniors** in web development basics
+- **Technical writer** - wrote 10+ articles on dev.to about my learnings
+
+### What I'm Looking For
+- **Internship opportunities** where I can contribute and learn
+- **Startup environments** where I can wear multiple hats
+- **AI/ML focused roles** where I can apply my passion
+- **Remote-friendly positions** because flexibility matters!
+    `;
+
+    // Availability & Opportunities
+    const availabilityContent = `
+## Availability & Work Opportunities
+
+### Current Availability
+**Status:** Open to internships and part-time opportunities!
+
+**Timeline:**
+- **Immediate:** Available for part-time/freelance work (15-20 hours/week)
+- **Summer 2025:** Fully available for summer internships (May-July)
+- **Academic Year:** Can do part-time work alongside studies
+
+### What I'm Looking For
+
+**Internship Preferences:**
+- **Duration:** 2-3 months minimum (need time to make real impact!)
+- **Type:** Full-stack development, AI/ML, or product development roles
+- **Location:** Remote preferred, but open to Gurgaon/Delhi NCR
+- **Compensation:** Fair stipend appreciated, but learning opportunities matter more
+
+**Freelance Work:**
+- **Web Development:** Full-stack applications, responsive websites
+- **AI Integration:** Chatbots, automation tools, data analysis
+- **Mobile Apps:** Flutter development for cross-platform apps
+- **Rates:** ₹500-1500/hour depending on project complexity
+
+### Ideal Work Environment
+- **Startup culture** - fast-paced, learning-focused, flexible
+- **Remote-first** or hybrid working model
+- **Mentorship available** - I want to learn from experienced developers
+- **Real impact** - working on products that users actually use
+- **Growth opportunities** - potential for full-time role after graduation
+
+### What I Can Offer
+**Technical Skills:**
+- Full-stack web development (MERN/PERN stack)
+- AI/ML integration and automation
+- Mobile app development with Flutter
+- Database design and optimization
+- Cloud deployment and DevOps basics
+
+**Soft Skills:**
+- Quick learner (picked up React in 2 weeks!)
+- Problem solver (love debugging complex issues)
+- Team player (hackathon experience proves it!)
+- Good communicator (can explain tech stuff in simple terms)
+- Self-motivated (built 15+ personal projects)
+
+### Contact for Opportunities
+- **Email:** Best way to reach me for formal discussions
+- **LinkedIn:** For professional networking
+- **GitHub:** Check out my code and projects
+- **Portfolio:** anshag.com - see everything in one place!
+
+**Response Time:** Usually respond within 24 hours (unless I'm deep in a coding session! 😅)
+    `;
+
+    // Add all knowledge base documents
+    await this.addDocument({
+      content: philosophyContent,
+      title: "Work Philosophy & Approach",
+      type: "philosophy"
+    });
+
+    await this.addDocument({
+      content: educationContent,
+      title: "Educational Background",
+      type: "education"
+    });
+
+    await this.addDocument({
+      content: goalsContent,
+      title: "Career Goals & Aspirations",
+      type: "goals"
+    });
+
+    await this.addDocument({
+      content: experienceContent,
+      title: "Professional Experience",
+      type: "experience"
+    });
+
+    await this.addDocument({
+      content: availabilityContent,
+      title: "Availability & Opportunities",
+      type: "availability"
+    });
+
+    // Call the existing addProjectDetails method
+    await this.addProjectDetails();
   }
 
   async addDocument(doc: { content: string; title: string; type: string }) {
@@ -137,7 +393,7 @@ Keep responses fun, real, and personal!
   async generateResponse(query: string, chatHistory: ChatMessage[] = []): Promise<string> {
     try {
       // Retrieve relevant context
-      const relevantDocs = await this.retrieveRelevantDocuments(query, 3);
+      const relevantDocs = await this.retrieveRelevantDocuments(query, 4);
       
       // Prepare context from retrieved documents
       const context = relevantDocs
@@ -160,7 +416,13 @@ ${historyContext}
 
 Current question: ${query}
 
-Respond as Ansh Agrawal based on the context above. Keep it casual, fun, and personal!
+Instructions:
+- Respond as Ansh Agrawal based on the context above
+- Keep it casual, fun, and personal
+- If the question is about philosophy, approach, goals, experience, or education, use the detailed info from the knowledge base
+- Always end with a follow-up question to keep the conversation going
+- Use emojis sparingly but effectively
+- If you don't know something specific, just say so honestly
       `;
 
       // Generate response

@@ -7,21 +7,21 @@ import {
   MoreHorizontal,
 } from 'lucide-react';
 
-/* ---------- quick-question data ---------- */
+/* ---------- Updated quick-question data with more specific prompts ---------- */
 export const questions = {
-  Me: 'Who are you? I want to know more about you.',
-  Projects: 'What are your projects? What are you working on right now?',
-  Skills: 'What are your skills? Give me a list of your soft and hard skills.',
-  Fun: "What's the craziest thing you've ever done? What are your hobbies?",
-  Contact: 'How can I contact you?',
-  More: 'Show me more options',
+  Me: 'Show me your profile', // More specific
+  Projects: 'Show me your projects', // More specific
+  Skills: 'Show me your skills', // More specific
+  Fun: 'Show me your adventure photos', // More specific
+  Contact: 'Show me your contact details', // More specific
+  More: 'Show me more options', // Already specific
 } as const;
 
 /* ---------- Additional questions for the More section ---------- */
 export const moreQuestions = [
   {
     id: 'resume',
-    question: 'Can I see your resume? Show me your resume.',
+    question: 'Show me your resume',
     label: 'Resume'
   },
   {
@@ -43,6 +43,21 @@ export const moreQuestions = [
     id: 'learning',
     question: 'What are you currently learning or want to learn?',
     label: 'Learning'
+  },
+  {
+    id: 'philosophy',
+    question: 'What is your work philosophy and approach?',
+    label: 'Philosophy'
+  },
+  {
+    id: 'experience',
+    question: 'Tell me about your professional experience',
+    label: 'Experience'
+  },
+  {
+    id: 'education',
+    question: 'What is your educational background?',
+    label: 'Education'
   }
 ];
 
