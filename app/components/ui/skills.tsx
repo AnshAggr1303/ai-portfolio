@@ -125,7 +125,7 @@ const Skills = () => {
       transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] as const }}
       className="mx-auto w-full max-w-5xl rounded-4xl"
     >
-      <Card className="w-full border-none px-0 pb-12 shadow-none">
+      <Card className="w-full border-none px-0 pb-12 shadow-none bg-transparent">
         <CardHeader className="px-0 pb-1">
           <CardTitle className="text-black px-0 text-4xl font-bold">Skills & Expertise</CardTitle>
         </CardHeader>
