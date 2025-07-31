@@ -30,7 +30,7 @@ export default function ChatInterface() {
 
   // Enhanced RAG override patterns - these ALWAYS go to RAG regardless of other matches
   const RAG_OVERRIDE_PATTERNS = [
-    // Question starters that are philosophical/informational
+    // Question starters that are philosophical/informational (excluding ones that should go to fun)
     /^what are you/i,
     /^how are you/i,
     /^why are you/i,
@@ -42,10 +42,10 @@ export default function ChatInterface() {
     /^what is your/i,
     /^what's your/i,
     
-    // Tell me about / Explain patterns
-    /^tell me about/i,
+    // Tell me about / Explain patterns (excluding adventure/fun related)
+    /^tell me about(?!.*(?:adventure|crazy|trek|photo|kedarnath|fun))/i,
     /^explain/i,
-    /^describe/i,
+    /^describe(?!.*(?:adventure|crazy|trek|photo|kedarnath|fun))/i,
     
     // Current/temporal questions
     /\bcurrently\b/i,
@@ -55,7 +55,7 @@ export default function ChatInterface() {
     /\brecently\b/i,
     /\blately\b/i,
     
-    // Opinion/preference questions
+    // Opinion/preference questions (excluding fun activities)
     /\bprefer\b/i,
     /\bfavorite\b/i,
     /\bbetter\b/i,
@@ -72,11 +72,11 @@ export default function ChatInterface() {
     /\bdifference between\b/i,
     /\bcompare\b/i,
     
-    // Experience/background questions
+    // Experience/background questions (excluding adventure)
     /\bexperience with\b/i,
     /\bbackground in\b/i,
-    /\bjourney\b/i,
-    /\bstory\b/i,
+    /\bjourney(?!.*(?:trek|mountain|adventure))\b/i,
+    /\bstory(?!.*(?:trek|mountain|adventure|crazy))\b/i,
     /\bhow did you\b/i,
     /\bwhy did you\b/i,
     /\bwhen did you start\b/i,
@@ -173,7 +173,27 @@ export default function ChatInterface() {
       "kedarnath trek", 
       "trek photos",
       "mountain photos",
-      "travel photos"
+      "travel photos",
+      "show me your adventure photos",
+      "crazy thing",
+      "craziest thing",
+      "what's the craziest thing",
+      "craziest thing you've done",
+      "crazy things you've done",
+      "adventure",
+      "adventures",
+      "hobbies",
+      "your hobbies",
+      "what are your hobbies",
+      "fun activities",
+      "outdoor activities",
+      "trekking",
+      "hiking",
+      "mountains",
+      "travel",
+      "crazy experiences",
+      "wild experiences",
+      "extreme activities"
     ],
     more: [
       "more",
@@ -272,10 +292,23 @@ export default function ChatInterface() {
       return "resume"
     }
 
-    // Fun patterns
+    // Enhanced Fun patterns - more comprehensive matching
     if (/^kedarnath$/i.test(lowerMessage) ||
         /^(show me\s+)?adventure\s+photos?$/i.test(lowerMessage) ||
-        /^fun\s+photos?$/i.test(lowerMessage)) {
+        /^fun\s+photos?$/i.test(lowerMessage) ||
+        /craziest?\s+thing/i.test(lowerMessage) ||
+        /crazy\s+thing/i.test(lowerMessage) ||
+        /^hobbies?$/i.test(lowerMessage) ||
+        /what\s+(are\s+)?(your\s+)?hobbies/i.test(lowerMessage) ||
+        /adventure/i.test(lowerMessage) ||
+        /trek/i.test(lowerMessage) ||
+        /mountain/i.test(lowerMessage) ||
+        /travel/i.test(lowerMessage) ||
+        /crazy\s+experience/i.test(lowerMessage) ||
+        /wild\s+experience/i.test(lowerMessage) ||
+        /extreme\s+activit/i.test(lowerMessage) ||
+        /fun\s+activit/i.test(lowerMessage) ||
+        /outdoor\s+activit/i.test(lowerMessage)) {
       return "fun"
     }
 
@@ -413,14 +446,14 @@ export default function ChatInterface() {
           }, 1000)
 
         } else if (componentType === "fun") {
-          responseContent = "Check out my Kedarnath trek adventure:"
+          responseContent = "Check out my adventures and crazy experiences:"
 
           setTimeout(() => {
             const followUpMessage: Message = {
               id: generateUniqueId(),
               role: "assistant",
               content:
-                "That was such an incredible experience! 🏔️ Kedarnath is one of those places that really tests your limits and rewards you with breathtaking views. The journey was challenging but so worth it!\n\nDo you enjoy trekking or outdoor adventures too?",
+                "That was such an incredible experience! 🏔️ Kedarnath is one of those places that really tests your limits and rewards you with breathtaking views. The journey was challenging but so worth it! I love pushing my boundaries and trying new adventures.\n\nDo you enjoy trekking or outdoor adventures too?",
               timestamp: new Date(),
             }
             setMessages((prev) => [...prev, followUpMessage])
