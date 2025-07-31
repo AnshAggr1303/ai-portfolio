@@ -358,7 +358,7 @@ export default function ChatInterface() {
               id: generateUniqueId(),
               role: "assistant",
               content:
-                "That's me in a nutshell! 👆 I'm passionate about creating innovative solutions and always excited to take on new challenges. Love working on projects that make a real impact! \n\nWhat kind of projects are you working on?",
+                "That's me in a nutshell! 👆 I'm passionate about creating innovative solutions and always excited to take on new challenges. Love working on projects that make a real impact! \n\nWhat about you? What’s your story? ?",
               timestamp: new Date(),
             }
             setMessages((prev) => [...prev, followUpMessage])
