@@ -11,8 +11,8 @@ interface ChatScreenProps {
   showQuickQuestions: boolean
   setShowQuickQuestions: (show: boolean) => void
   handleSendMessage: (messageContent?: string) => void
-  messagesEndRef: React.RefObject<HTMLDivElement>
-  textareaRef: React.RefObject<HTMLTextAreaElement>
+  messagesEndRef: React.RefObject<HTMLDivElement | null>
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>
   onSendMessage?: (message: string) => void
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>
 }

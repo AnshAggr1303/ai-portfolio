@@ -13,7 +13,7 @@ interface ChatInputProps {
   showQuickQuestions: boolean
   setShowQuickQuestions: (show: boolean) => void
   handleSendMessage: (messageContent?: string) => void
-  textareaRef: React.RefObject<HTMLTextAreaElement>
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>
 }
 

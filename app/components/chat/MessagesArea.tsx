@@ -2,6 +2,9 @@
 
 import type React from "react"
 import { MessageCircle } from "lucide-react"
+import ReactMarkdown from "react-markdown"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import type { Message } from "../../types/chat"
 import ProfileCard, { profileData } from "../ui/ProfileCard"
 import Skills from "../ui/skills"
@@ -17,7 +20,7 @@ import MoreDrawer from "./MoreDrawer"
 interface MessagesAreaProps {
   messages: Message[]
   isLoading: boolean
-  messagesEndRef: React.RefObject<HTMLDivElement>
+  messagesEndRef: React.RefObject<HTMLDivElement | null>
   onSendMessage: (message: string) => void
 }
 
@@ -29,6 +32,90 @@ const MOTION_CONFIG = {
     duration: 0.3,
     ease: "easeOut" as const,
   },
+}
+
+// Custom components for ReactMarkdown
+const MarkdownComponents = {
+  code: ({ node, inline, className, children, ...props }: any) => {
+    const match = /language-(\w+)/.exec(className || '')
+    const language = match ? match[1] : ''
+    
+    if (!inline && language) {
+      return (
+        <SyntaxHighlighter
+          style={oneDark}
+          language={language}
+          PreTag="div"
+          className="rounded-lg my-4"
+          {...props}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      )
+    }
+    
+    return (
+      <code 
+        className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono" 
+        {...props}
+      >
+        {children}
+      </code>
+    )
+  },
+  p: ({ children }: any) => (
+    <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>
+  ),
+  h1: ({ children }: any) => (
+    <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">{children}</h1>
+  ),
+  h2: ({ children }: any) => (
+    <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">{children}</h2>
+  ),
+  h3: ({ children }: any) => (
+    <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">{children}</h3>
+  ),
+  ul: ({ children }: any) => (
+    <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>
+  ),
+  ol: ({ children }: any) => (
+    <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>
+  ),
+  li: ({ children }: any) => (
+    <li className="text-sm leading-relaxed">{children}</li>
+  ),
+  blockquote: ({ children }: any) => (
+    <blockquote className="border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic my-4 text-gray-700 dark:text-gray-300">
+      {children}
+    </blockquote>
+  ),
+  a: ({ href, children }: any) => (
+    <a 
+      href={href} 
+      className="text-blue-600 dark:text-blue-400 hover:underline" 
+      target="_blank" 
+      rel="noopener noreferrer"
+    >
+      {children}
+    </a>
+  ),
+  table: ({ children }: any) => (
+    <div className="overflow-x-auto my-4">
+      <table className="min-w-full border border-gray-300 dark:border-gray-600">
+        {children}
+      </table>
+    </div>
+  ),
+  th: ({ children }: any) => (
+    <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 bg-gray-50 dark:bg-gray-800 font-semibold text-left">
+      {children}
+    </th>
+  ),
+  td: ({ children }: any) => (
+    <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
+      {children}
+    </td>
+  ),
 }
 
 export default function MessagesArea({ messages, isLoading, messagesEndRef, onSendMessage }: MessagesAreaProps) {
@@ -69,7 +156,11 @@ export default function MessagesArea({ messages, isLoading, messagesEndRef, onSe
                   {message.content && (
                     <ChatBubble variant={message.role === "user" ? "sent" : "received"}>
                       <ChatBubbleMessage variant={message.role === "user" ? "sent" : "received"} className="w-full">
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                        <div className="text-sm leading-relaxed prose prose-sm max-w-none dark:prose-invert">
+                          <ReactMarkdown components={MarkdownComponents}>
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
                       </ChatBubbleMessage>
                     </ChatBubble>
                   )}

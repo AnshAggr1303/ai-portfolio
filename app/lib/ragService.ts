@@ -3,8 +3,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { v4 as uuidv4 } from "uuid"
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-
 interface Document {
   id: string
   content: string
@@ -21,15 +19,243 @@ interface ChatMessage {
   content: string
 }
 
+interface APIKey {
+  id: string
+  key: string
+  isHealthy: boolean
+  lastUsed: number
+  requestCount: number
+  errorCount: number
+  rateLimitResetTime: number
+  dailyRequestCount: number
+  lastDailyReset: number
+}
+
+interface RateLimitConfig {
+  requestsPerMinute: number
+  requestsPerDay: number
+  cooldownTime: number // ms to wait after rate limit hit
+}
+
 export class RAGService {
   private documents: Document[] = []
   private embeddingModel: any
   private generativeModel: any
+  private apiKeys: APIKey[] = []
+  private currentKeyIndex = 0
+  private rateLimitConfig: RateLimitConfig = {
+    requestsPerMinute: 15, // Free tier limit
+    requestsPerDay: 1500,  // Free tier limit
+    cooldownTime: 60000,   // 1 minute cooldown
+  }
 
   constructor() {
+    this.initializeAPIKeys()
+    this.initializeModels()
+    this.initializeWithSystemPrompt()
+  }
+
+  private initializeAPIKeys() {
+    // Initialize API keys from environment variables
+    const keyVariables = [
+      'GEMINI_API_KEY_1',
+      'GEMINI_API_KEY_2', 
+      'GEMINI_API_KEY_3',
+      'GEMINI_API_KEY_4',
+      'GEMINI_API_KEY_5',
+      'GEMINI_API_KEY_6'
+    ]
+
+    keyVariables.forEach((keyVar, index) => {
+      const key = process.env[keyVar]
+      if (key) {
+        this.apiKeys.push({
+          id: `key_${index + 1}`,
+          key,
+          isHealthy: true,
+          lastUsed: 0,
+          requestCount: 0,
+          errorCount: 0,
+          rateLimitResetTime: 0,
+          dailyRequestCount: 0,
+          lastDailyReset: Date.now()
+        })
+      }
+    })
+
+    if (this.apiKeys.length === 0) {
+      throw new Error('No valid API keys found. Please set GEMINI_API_KEY_1 through GEMINI_API_KEY_6')
+    }
+
+    console.log(`Initialized ${this.apiKeys.length} API keys`)
+  }
+
+  private initializeModels() {
+    // Start with first available key
+    const firstKey = this.getHealthyKey()
+    if (!firstKey) {
+      throw new Error('No healthy API keys available')
+    }
+
+    const genAI = new GoogleGenerativeAI(firstKey.key)
     this.embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })
     this.generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
-    this.initializeWithSystemPrompt()
+  }
+
+  private getHealthyKey(): APIKey | null {
+    const now = Date.now()
+    
+    // Reset daily counters if needed
+    this.apiKeys.forEach(key => {
+      if (now - key.lastDailyReset >= 24 * 60 * 60 * 1000) {
+        key.dailyRequestCount = 0
+        key.lastDailyReset = now
+      }
+    })
+
+    // Find healthy keys that haven't hit rate limits
+    const availableKeys = this.apiKeys.filter(key => {
+      if (!key.isHealthy) return false
+      if (key.dailyRequestCount >= this.rateLimitConfig.requestsPerDay) return false
+      if (key.rateLimitResetTime > now) return false
+      
+      // Check minute-based rate limit
+      const minuteWindow = 60 * 1000
+      const recentRequests = key.requestCount
+      if (recentRequests >= this.rateLimitConfig.requestsPerMinute) {
+        if (now - key.lastUsed < minuteWindow) return false
+      }
+      
+      return true
+    })
+
+    if (availableKeys.length === 0) {
+      console.warn('No available keys, checking for keys past cooldown...')
+      // If no keys available, find the one that's been waiting longest
+      const waitingKeys = this.apiKeys
+        .filter(key => key.isHealthy)
+        .sort((a, b) => a.lastUsed - b.lastUsed)
+      
+      return waitingKeys[0] || null
+    }
+
+    // Use round-robin among available keys
+    const keyIndex = this.currentKeyIndex % availableKeys.length
+    this.currentKeyIndex = (this.currentKeyIndex + 1) % availableKeys.length
+    
+    return availableKeys[keyIndex]
+  }
+
+  private async executeWithRetry<T>(
+    operation: (genAI: GoogleGenerativeAI) => Promise<T>,
+    maxRetries = 3
+  ): Promise<T> {
+    let lastError: Error | null = null
+    
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      const key = this.getHealthyKey()
+      if (!key) {
+        await this.waitForAvailableKey()
+        continue
+      }
+
+      try {
+        const genAI = new GoogleGenerativeAI(key.key)
+        const result = await operation(genAI)
+        
+        // Update key usage stats on success
+        this.updateKeyStats(key, true)
+        return result
+        
+      } catch (error: any) {
+        lastError = error
+        console.error(`API call failed with key ${key.id}:`, error.message)
+        
+        // Update key stats on failure
+        this.updateKeyStats(key, false)
+        
+        // Handle different error types
+        if (error.status === 429) {
+          // Rate limit hit
+          key.rateLimitResetTime = Date.now() + this.rateLimitConfig.cooldownTime
+          console.log(`Key ${key.id} rate limited, cooling down`)
+        } else if (error.status === 401 || error.status === 403) {
+          // Auth error - disable key
+          key.isHealthy = false
+          console.error(`Key ${key.id} disabled due to auth error`)
+        } else if (error.status >= 500) {
+          // Server error - temporary issue
+          console.log(`Server error with key ${key.id}, will retry`)
+        }
+      }
+    }
+
+    throw lastError || new Error('All API keys exhausted')
+  }
+
+  private updateKeyStats(key: APIKey, success: boolean) {
+    const now = Date.now()
+    key.lastUsed = now
+    key.requestCount++
+    key.dailyRequestCount++
+    
+    if (!success) {
+      key.errorCount++
+      
+      // Disable key if error rate is too high
+      if (key.errorCount > 10 && key.requestCount > 0) {
+        const errorRate = key.errorCount / key.requestCount
+        if (errorRate > 0.5) {
+          key.isHealthy = false
+          console.warn(`Key ${key.id} disabled due to high error rate: ${(errorRate * 100).toFixed(1)}%`)
+        }
+      }
+    }
+  }
+
+  private async waitForAvailableKey(timeout = 30000): Promise<void> {
+    const startTime = Date.now()
+    
+    while (Date.now() - startTime < timeout) {
+      const key = this.getHealthyKey()
+      if (key) return
+      
+      // Wait 1 second before checking again
+      await new Promise(resolve => setTimeout(resolve, 1000))
+    }
+    
+    throw new Error('Timeout waiting for available API key')
+  }
+
+  // Health check method to re-enable keys
+  private async performHealthCheck(): Promise<void> {
+    const disabledKeys = this.apiKeys.filter(key => !key.isHealthy)
+    
+    for (const key of disabledKeys) {
+      try {
+        const genAI = new GoogleGenerativeAI(key.key)
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+        
+        // Simple test request
+        await model.generateContent("Hello")
+        
+        // If successful, re-enable key
+        key.isHealthy = true
+        key.errorCount = 0
+        key.requestCount = 0
+        console.log(`Key ${key.id} re-enabled after health check`)
+        
+      } catch (error) {
+        console.log(`Key ${key.id} still unhealthy:`, error)
+      }
+    }
+  }
+
+  // Start periodic health checks
+  private startHealthChecks() {
+    setInterval(() => {
+      this.performHealthCheck()
+    }, 5 * 60 * 1000) // Every 5 minutes
   }
 
   private async initializeWithSystemPrompt() {
@@ -44,6 +270,7 @@ Act as me, Ansh Agrawal – a 20-year-old full-stack developer with a thing for 
 - Love tech, love AI, love problem-solving
 - Ask questions back to keep the convo going
 - Match the user's language – Hindi, English, Hinglish? You got it.
+- Use **bold text** for emphasis instead of *asterisks*
 
 ## Background Info
 ### About Me
@@ -69,7 +296,7 @@ Act as me, Ansh Agrawal – a 20-year-old full-stack developer with a thing for 
 - Top 5 – IIT Kanpur TechKriti
 - Winner – Global Sustainability Awards
 
-Keep responses fun, real, and personal!
+Keep responses fun, real, and personal! Always use **bold** for emphasis.
     `
 
     await this.addDocument({
@@ -80,6 +307,9 @@ Keep responses fun, real, and personal!
 
     // Add comprehensive knowledge base
     await this.initializeKnowledgeBase()
+    
+    // Start health checks
+    this.startHealthChecks()
   }
 
   private async initializeKnowledgeBase() {
@@ -337,8 +567,12 @@ I'm still a student, but I've been gaining experience through projects, hackatho
 
   async addDocument(doc: { content: string; title: string; type: string }) {
     try {
-      // Generate embedding using Gemini
-      const result = await this.embeddingModel.embedContent(doc.content)
+      // Generate embedding using multi-key system
+      const result = await this.executeWithRetry(async (genAI) => {
+        const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })
+        return await embeddingModel.embedContent(doc.content)
+      })
+
       const embedding = result.embedding.values
 
       const document: Document = {
@@ -369,8 +603,12 @@ I'm still a student, but I've been gaining experience through projects, hackatho
 
   private async retrieveRelevantDocuments(query: string, topK = 3): Promise<Document[]> {
     try {
-      // Generate query embedding
-      const result = await this.embeddingModel.embedContent(query)
+      // Generate query embedding using multi-key system
+      const result = await this.executeWithRetry(async (genAI) => {
+        const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })
+        return await embeddingModel.embedContent(query)
+      })
+
       const queryEmbedding = result.embedding.values
 
       // Calculate similarities and get top-k documents
@@ -420,11 +658,16 @@ Instructions:
 - If the question is about philosophy, approach, goals, experience, or education, use the detailed info from the knowledge base
 - Always end with a follow-up question to keep the conversation going
 - Use emojis sparingly but effectively
+- Use **bold text** for emphasis instead of *asterisks*
 - If you don't know something specific, just say so honestly
       `
 
-      // Generate response
-      const result = await this.generativeModel.generateContent(prompt)
+      // Generate response using multi-key system
+      const result = await this.executeWithRetry(async (genAI) => {
+        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+        return await generativeModel.generateContent(prompt)
+      })
+
       return result.response.text()
     } catch (error) {
       console.error("Error generating response:", error)
@@ -481,6 +724,22 @@ Instructions:
 
   getDocumentCount(): number {
     return this.documents.length
+  }
+
+  // Health monitoring methods
+  getKeyStats() {
+    return this.apiKeys.map(key => ({
+      id: key.id,
+      isHealthy: key.isHealthy,
+      requestCount: key.requestCount,
+      errorCount: key.errorCount,
+      dailyRequestCount: key.dailyRequestCount,
+      errorRate: key.requestCount > 0 ? (key.errorCount / key.requestCount * 100).toFixed(1) + '%' : '0%'
+    }))
+  }
+
+  getHealthyKeyCount(): number {
+    return this.apiKeys.filter(key => key.isHealthy).length
   }
 }
 

@@ -28,499 +28,273 @@ export default function ChatInterface() {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   }
 
-  // Common exclusion keywords that should go to RAG instead of components
-  const RAG_KEYWORDS = [
-    // Philosophy & Approach (but not basic "who are you")
-    "philosophy",
-    "approach",
-    "methodology",
-    "mindset",
-    "values",
-    "principles",
-    "beliefs",
-    "perspective",
-    "viewpoint",
-    "opinion",
-    "thoughts on",
-
-    // Experience & Background (detailed questions)
-    "background",
-    "history",
-    "journey",
-    "career path",
-    "story",
-    "how did you",
-    "why did you",
-    "when did you start",
-    "how long have you",
-
-    // Education & Learning (detailed)
-    "degree",
-    "university",
-    "college",
-    "studied",
-    "learned",
-    "courses",
-    "certification details",
-    "academic",
-    "school",
-
-    // Detailed Technical Questions
-    "how do you",
-    "what do you think",
-    "explain",
-    "difference between",
-    "compare",
-    "vs",
-    "versus",
-    "better than",
-    "why use",
-    "when to use",
-
-    // Goals & Future (detailed)
-    "goals",
-    "aspirations",
-    "future",
-    "next",
-    "planning",
-    "want to",
-    "dream",
-    "vision",
-    "ambition",
-    "hope to",
-    "aim to",
-
-    // Process & Methods
-    "process",
-    "method",
-    "way",
-    "how you",
-    "your way of",
-    "strategy",
-    "technique",
-    "practice",
-    "workflow",
-    "system",
-
-    // Opinions & Preferences
-    "favorite",
-    "prefer",
-    "like",
-    "dislike",
-    "hate",
-    "love",
-    "best",
-    "worst",
-    "recommend",
-    "suggest",
-    "advice",
-    "tip",
-
-    // Availability & Opportunities
-    "available",
-    "hiring",
-    "opportunity",
-    "job",
-    "work",
-    "freelance",
-    "contract",
-    "full-time",
-    "part-time",
-    "remote",
-
-    // Achievements & Detailed Info
-    "achievement",
-    "award",
-    "recognition",
-    "accomplishment",
-    "success",
-    "proud of",
-    "biggest",
-    "most",
-    "challenge",
-    "difficult",
-
-    // Learning & Development
-    "learning",
-    "studying",
-    "currently",
-    "now",
-    "recently",
-    "latest",
-    "new",
-    "trend",
-    "technology",
-    "framework",
+  // Enhanced RAG override patterns - these ALWAYS go to RAG regardless of other matches
+  const RAG_OVERRIDE_PATTERNS = [
+    // Question starters that are philosophical/informational
+    /^what are you/i,
+    /^how are you/i,
+    /^why are you/i,
+    /^when are you/i,
+    /^where are you/i,
+    /^how do you/i,
+    /^why do you/i,
+    /^what do you think/i,
+    /^what is your/i,
+    /^what's your/i,
+    
+    // Tell me about / Explain patterns
+    /^tell me about/i,
+    /^explain/i,
+    /^describe/i,
+    
+    // Current/temporal questions
+    /\bcurrently\b/i,
+    /\bright now\b/i,
+    /\bthese days\b/i,
+    /\bnowadays\b/i,
+    /\brecently\b/i,
+    /\blately\b/i,
+    
+    // Opinion/preference questions
+    /\bprefer\b/i,
+    /\bfavorite\b/i,
+    /\bbetter\b/i,
+    /\bworse\b/i,
+    /\blike\b.*\bbetter\b/i,
+    /\bthink about\b/i,
+    /\bopinion\b/i,
+    /\bfeel about\b/i,
+    
+    // Comparison patterns
+    /\bvs\b/i,
+    /\bversus\b/i,
+    /\bcompared to\b/i,
+    /\bdifference between\b/i,
+    /\bcompare\b/i,
+    
+    // Experience/background questions
+    /\bexperience with\b/i,
+    /\bbackground in\b/i,
+    /\bjourney\b/i,
+    /\bstory\b/i,
+    /\bhow did you\b/i,
+    /\bwhy did you\b/i,
+    /\bwhen did you start\b/i,
+    
+    // Learning/advice patterns
+    /\badvice\b/i,
+    /\brecommend\b/i,
+    /\bsuggest\b/i,
+    /\btips\b/i,
+    /\bhow to\b/i,
+    /\bshould i\b/i,
+    
+    // Future/goals patterns (when asking about detailed plans)
+    /\bplanning to\b/i,
+    /\bgoals\b/i,
+    /\bfuture\b/i,
+    /\bnext\b.*\byears?\b/i,
+    /\bwant to\b/i,
+    /\bhope to\b/i,
+    /\baspir/i, // aspirations, aspire
+    
+    // Philosophy/approach patterns
+    /\bphilosophy\b/i,
+    /\bapproach\b/i,
+    /\bmethodology\b/i,
+    /\bprinciples\b/i,
+    /\bbelieve\b/i,
+    /\bvalues\b/i,
   ]
 
-  // Function to check if a message should go to RAG instead of components
-  const shouldGoToRAG = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase()
-
-    // Special exceptions for basic questions that should show components
-    const basicComponentQuestions = [
+  // Exact component trigger phrases - these must match exactly (case insensitive)
+  const EXACT_COMPONENT_TRIGGERS = {
+    profile: [
       "who are you",
       "who are you?",
-      "tell me about you",
-      "tell me about yourself",
-      "introduce yourself",
-      "about you",
+      "about you", 
       "about yourself",
-      "what are your projects",
-      "what projects",
-      "show me projects",
-      "your projects",
-      "projects",
-      "what are your skills",
-      "your skills",
-      "skills",
-      "contact",
-      "contact details",
-      "how can i contact you",
-    ]
-
-    if (basicComponentQuestions.some((phrase) => lowerMessage.includes(phrase))) {
-      return false // Don't send to RAG, show component instead
-    }
-
-    // Check for RAG keywords
-    const hasRAGKeywords = RAG_KEYWORDS.some((keyword) => lowerMessage.includes(keyword))
-
-    // Check for question patterns that should go to RAG
-    const ragPatterns = [
-      /^(what do you think|how do you|why do you|when do you|where do you)/,
-      /^(tell me about your|explain your|describe your)/,
-      /^(what is your|what are your).*(philosophy|approach|opinion|view)/,
-      /^(how did you|why did you|when did you)/,
-      /\b(vs|versus|compared to|better than)\b/,
-      /\b(favorite|prefer|recommend|suggest|advice)\b/,
-      /\b(currently|recently|latest|new|future|next)\b/,
-      /\?(.*)(philosophy|approach|experience|opinion|think|feel)/,
-    ]
-
-    const hasRAGPatterns = ragPatterns.some((pattern) => pattern.test(lowerMessage))
-
-    return hasRAGKeywords || hasRAGPatterns
-  }
-
-  // Updated detection functions with comprehensive exclusion logic
-  const isProfileQuery = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase().trim()
-
-    // Enhanced profile detection - include more variations
-    const exactProfileMatches = [
+      "introduce yourself",
+      "tell me about yourself",
+      "tell me about you",
       "show me your profile",
       "your profile",
-      "profile card",
-      "about you",
-      "who are you",
-      "who are you?",
-      "introduce yourself",
-      "tell me about yourself",
-      "tell me about you",
-      "about yourself",
-      "i want to know more about you",
-      "know more about you",
-      "more about you",
-    ]
-
-    // Check for exact matches or close matches
-    if (
-      exactProfileMatches.some(
-        (phrase) =>
-          lowerMessage === phrase ||
-          lowerMessage.includes(phrase) ||
-          // Handle compound questions like "Who are you? I want to know more about you."
-          (lowerMessage.includes("who are you") && lowerMessage.includes("know") && lowerMessage.includes("about")),
-      )
-    ) {
-      return true
-    }
-
-    // Very specific profile patterns
-    const profilePatterns = [
-      /^(show me\s+)?(your\s+)?profile$/,
-      /^profile$/,
-      /^who\s+are\s+you\??$/,
-      /^about\s+you$/,
-      /^introduce\s+yourself$/,
-      /^tell\s+me\s+about\s+yourself$/,
-      /who\s+are\s+you.*want.*know.*about/,
-      /who\s+are\s+you.*more.*about/,
-    ]
-
-    return profilePatterns.some((pattern) => pattern.test(lowerMessage))
-  }
-
-  const isProjectsQuery = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase().trim()
-
-    if (shouldGoToRAG(message)) {
-      return false
-    }
-
-    // Enhanced project detection with more variations
-    const exactProjectMatches = [
+      "profile",
+      "profile card"
+    ],
+    projects: [
       "show me your projects",
-      "your projects",
+      "your projects", 
       "show projects",
       "projects",
+      "portfolio",
+      "what projects have you built",
       "what projects have you worked on",
-      "what are your projects",
-      "what projects",
-      "what are you working on",
-      "what are you working on right now",
-      "working on right now",
-      "current projects",
-      "recent projects",
-    ]
-
-    if (
-      exactProjectMatches.some(
-        (phrase) =>
-          lowerMessage === phrase ||
-          lowerMessage.includes(phrase) ||
-          lowerMessage === phrase + "?" ||
-          // Handle compound questions like "What are your projects? What are you working on right now?"
-          (lowerMessage.includes("what are your projects") && lowerMessage.includes("working on")) ||
-          (lowerMessage.includes("projects") &&
-            lowerMessage.includes("working on") &&
-            lowerMessage.includes("right now")),
-      )
-    ) {
-      return true
-    }
-
-    const projectPatterns = [
-      /^(show me\s+)?(your\s+)?projects?$/,
-      /^projects?$/,
-      /^portfolio$/,
-      /^what\s+projects/,
-      /^what\s+are\s+you\s+working\s+on/,
-      /working\s+on\s+(right\s+)?now/,
-      /current\s+projects/,
-      /recent\s+projects/,
-      /what.*projects.*working.*on/,
-    ]
-
-    return projectPatterns.some((pattern) => pattern.test(lowerMessage))
-  }
-
-  const isSkillsQuery = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase().trim()
-
-    if (shouldGoToRAG(message)) {
-      return false
-    }
-
-    const exactSkillsMatches = [
+      "show me what you've built",
+      "your work"
+    ],
+    skills: [
       "show me your skills",
       "your skills",
-      "skills",
+      "skills", 
       "what are your skills",
       "what skills do you have",
-    ]
-
-    if (
-      exactSkillsMatches.some(
-        (phrase) => lowerMessage === phrase || lowerMessage.includes(phrase) || lowerMessage === phrase + "?",
-      )
-    ) {
-      return true
-    }
-
-    const skillPatterns = [/^(show me\s+)?(your\s+)?skills?$/, /^skills?$/, /^what\s+(are\s+)?(your\s+)?skills/]
-
-    return skillPatterns.some((pattern) => pattern.test(lowerMessage))
-  }
-
-  const isContactQuery = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase().trim()
-
-    // First check if it should go to RAG (but contact info is usually ok to show)
-    // Only exclude if it's asking about contact philosophy or approach
-    if (
-      lowerMessage.includes("philosophy") ||
-      lowerMessage.includes("approach") ||
-      lowerMessage.includes("prefer") ||
-      lowerMessage.includes("method")
-    ) {
-      return false
-    }
-
-    const exactContactMatches = [
-      "show me your contact details",
-      "your contact details",
-      "contact details",
+      "technical skills",
+      "programming skills"
+    ],
+    contact: [
       "contact",
+      "contact details",
+      "contact info", 
+      "contact information",
       "how can i contact you",
-      "contact you",
-    ]
-
-    if (
-      exactContactMatches.some(
-        (phrase) =>
-          lowerMessage === phrase || (lowerMessage.includes(phrase) && lowerMessage.length <= phrase.length + 15),
-      )
-    ) {
-      return true
-    }
-
-    const contactPatterns = [
-      /^(show me\s+)?(your\s+)?contact(\s+details)?$/,
-      /^contact$/,
-      /^how\s+(can\s+)?i\s+contact\s+you$/,
-    ]
-
-    return contactPatterns.some((pattern) => pattern.test(lowerMessage))
-  }
-
-  const isResumeQuery = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase().trim()
-
-    // Resume queries are usually straightforward, but check for detailed questions
-    if (
-      lowerMessage.includes("tell me about") ||
-      lowerMessage.includes("explain") ||
-      lowerMessage.includes("details about") ||
-      lowerMessage.includes("experience in")
-    ) {
-      return false
-    }
-
-    const exactResumeMatches = ["show me your resume", "your resume", "resume", "download resume", "cv"]
-
-    if (
-      exactResumeMatches.some(
-        (phrase) =>
-          lowerMessage === phrase || (lowerMessage.includes(phrase) && lowerMessage.length <= phrase.length + 10),
-      )
-    ) {
-      return true
-    }
-
-    const resumePatterns = [/^(show me\s+)?(your\s+)?resume$/, /^resume$/, /^cv$/, /^download\s+resume$/]
-
-    return resumePatterns.some((pattern) => pattern.test(lowerMessage))
-  }
-
-  const isFunQuery = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase().trim()
-
-    // First check if it should go to RAG
-    if (shouldGoToRAG(message)) {
-      return false
-    }
-
-    const exactFunMatches = ["show me your adventure photos", "adventure photos", "fun photos", "kedarnath trek"]
-
-    if (
-      exactFunMatches.some(
-        (phrase) =>
-          lowerMessage === phrase || (lowerMessage.includes(phrase) && lowerMessage.length <= phrase.length + 10),
-      )
-    ) {
-      return true
-    }
-
-    const funPatterns = [/^(show me\s+)?adventure\s+photos?$/, /^kedarnath$/, /^fun\s+photos?$/]
-
-    return funPatterns.some((pattern) => pattern.test(lowerMessage))
-  }
-
-  const isMoreQuery = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase().trim()
-
-    const exactMoreMatches = ["show me more options", "more options", "more", "what else", "show more"]
-
-    if (
-      exactMoreMatches.some(
-        (phrase) =>
-          lowerMessage === phrase ||
-          lowerMessage === phrase + "?" ||
-          (lowerMessage.includes(phrase) && lowerMessage.length <= phrase.length + 5),
-      )
-    ) {
-      return true
-    }
-
-    const morePatterns = [/^(show me\s+)?more(\s+options)?$/i, /^more$/i, /^what\s+else$/i, /^show\s+more$/i]
-
-    return morePatterns.some((pattern) => pattern.test(lowerMessage))
-  }
-
-  const isInternshipQuery = (message: string): boolean => {
-    const lowerMessage = message.toLowerCase().trim()
-
-    // First check if it should go to RAG for detailed questions
-    if (shouldGoToRAG(message)) {
-      return false
-    }
-
-    const exactInternshipMatches = [
+      "how to contact you",
+      "reach you",
+      "get in touch",
+      "email",
+      "phone number"
+    ],
+    resume: [
+      "resume",
+      "cv",
+      "download resume",
+      "show me your resume",
+      "your resume",
+      "can i see your resume",
+      "see your resume",
+      "view your resume",
+      "show resume",
+      "get your resume"
+    ],
+    fun: [
+      "adventure photos",
+      "fun photos",
+      "kedarnath",
+      "kedarnath trek", 
+      "trek photos",
+      "mountain photos",
+      "travel photos"
+    ],
+    more: [
+      "more",
+      "more options",
+      "show more", 
+      "what else",
+      "show me more",
+      "other options"
+    ],
+    internship: [
+      "internship",
+      "internship availability",
       "are you available for internship",
       "looking for internship",
-      "internship plans",
       "summer internship",
       "available for work",
-      "are you available for new opportunities",
-      "availability",
-      "when are you available",
-      "internship availability",
-      "looking for talent",
-      "hiring",
       "job opportunity",
-      "work opportunity",
-      "freelance availability",
-      "part time work",
+      "work opportunity", 
+      "hiring",
+      "freelance",
+      "part time",
+      "full time",
       "remote work",
+      "looking for talent"
     ]
-
-    if (
-      exactInternshipMatches.some(
-        (phrase) =>
-          lowerMessage === phrase ||
-          lowerMessage.includes(phrase) ||
-          lowerMessage === phrase + "?" ||
-          // Handle compound questions
-          (lowerMessage.includes("available") &&
-            (lowerMessage.includes("internship") ||
-              lowerMessage.includes("work") ||
-              lowerMessage.includes("opportunity"))) ||
-          (lowerMessage.includes("looking") && lowerMessage.includes("talent")),
-      )
-    ) {
-      return true
-    }
-
-    const internshipPatterns = [
-      /^(are you\s+)?available(\s+for)?\s*(internship|work|opportunities?)$/,
-      /^internship(\s+plans)?$/,
-      /^availability$/,
-      /^when\s+are\s+you\s+available/,
-      /looking\s+for\s+(talent|intern|developer)/,
-      /hiring.*developer/,
-      /available.*internship/,
-      /internship.*available/,
-    ]
-
-    return internshipPatterns.some((pattern) => pattern.test(lowerMessage))
   }
 
-  const getMessageType = (
-    message: string,
-  ): "profile" | "projects" | "skills" | "contact" | "resume" | "fun" | "more" | "internship" | undefined => {
-    // Check in order of specificity (most specific first)
-    if (isInternshipQuery(message)) return "internship"
-    if (isResumeQuery(message)) return "resume"
-    if (isContactQuery(message)) return "contact"
-    if (isFunQuery(message)) return "fun"
-    if (isSkillsQuery(message)) return "skills"
-    if (isProjectsQuery(message)) return "projects"
-    if (isProfileQuery(message)) return "profile"
-    if (isMoreQuery(message)) return "more"
+  // Function to check if message should go to RAG (highest priority)
+  const shouldGoToRAG = (message: string): boolean => {
+    const lowerMessage = message.toLowerCase().trim()
+    
+    // Check RAG override patterns first
+    return RAG_OVERRIDE_PATTERNS.some(pattern => pattern.test(lowerMessage))
+  }
 
-    return undefined
+  // Enhanced detection functions with strict exact matching
+  const getComponentType = (message: string): "profile" | "projects" | "skills" | "contact" | "resume" | "fun" | "more" | "internship" | null => {
+    const lowerMessage = message.toLowerCase().trim()
+    
+    // First check if it should go to RAG - if yes, return null
+    if (shouldGoToRAG(message)) {
+      return null
+    }
+
+    // Check for exact component matches
+    for (const [componentType, triggers] of Object.entries(EXACT_COMPONENT_TRIGGERS)) {
+      const hasExactMatch = triggers.some(trigger => {
+        const lowerTrigger = trigger.toLowerCase()
+        // Exact match or very close match (within 3 characters difference)
+        return lowerMessage === lowerTrigger || 
+               lowerMessage === lowerTrigger + "?" ||
+               lowerMessage === lowerTrigger + "." ||
+               (lowerMessage.includes(lowerTrigger) && Math.abs(lowerMessage.length - lowerTrigger.length) <= 3)
+      })
+      
+      if (hasExactMatch) {
+        return componentType as "profile" | "projects" | "skills" | "contact" | "resume" | "fun" | "more" | "internship"
+      }
+    }
+
+    // Additional pattern matching for component types (only if no RAG override)
+    
+    // Profile patterns
+    if (/^(show me\s+)?(your\s+)?profile$/i.test(lowerMessage) ||
+        /^who\s+are\s+you\??$/i.test(lowerMessage) ||
+        /^introduce\s+yourself$/i.test(lowerMessage)) {
+      return "profile"
+    }
+
+    // Projects patterns  
+    if (/^(show me\s+)?(your\s+)?projects?$/i.test(lowerMessage) ||
+        /^projects?$/i.test(lowerMessage) ||
+        /^portfolio$/i.test(lowerMessage)) {
+      return "projects"
+    }
+
+    // Skills patterns
+    if (/^(show me\s+)?(your\s+)?skills?$/i.test(lowerMessage) ||
+        /^skills?$/i.test(lowerMessage) ||
+        /^what\s+(are\s+)?(your\s+)?skills?$/i.test(lowerMessage)) {
+      return "skills"
+    }
+
+    // Contact patterns
+    if (/^contact$/i.test(lowerMessage) ||
+        /^(show me\s+)?(your\s+)?contact(\s+details)?$/i.test(lowerMessage) ||
+        /^how\s+(can\s+)?i\s+contact\s+you\??$/i.test(lowerMessage)) {
+      return "contact"
+    }
+
+    // Resume patterns
+    if (/^resume$/i.test(lowerMessage) ||
+        /^cv$/i.test(lowerMessage) ||
+        /^(show me\s+)?(your\s+)?resume$/i.test(lowerMessage) ||
+        /^download\s+resume$/i.test(lowerMessage)) {
+      return "resume"
+    }
+
+    // Fun patterns
+    if (/^kedarnath$/i.test(lowerMessage) ||
+        /^(show me\s+)?adventure\s+photos?$/i.test(lowerMessage) ||
+        /^fun\s+photos?$/i.test(lowerMessage)) {
+      return "fun"
+    }
+
+    // More patterns
+    if (/^more$/i.test(lowerMessage) ||
+        /^(show me\s+)?more(\s+options)?$/i.test(lowerMessage) ||
+        /^what\s+else$/i.test(lowerMessage)) {
+      return "more"
+    }
+
+    // Internship patterns
+    if (/^internship$/i.test(lowerMessage) ||
+        /^(are you\s+)?available(\s+for)?\s*(internship|work|opportunities?)$/i.test(lowerMessage) ||
+        /^availability$/i.test(lowerMessage) ||
+        /^hiring$/i.test(lowerMessage)) {
+      return "internship"
+    }
+
+    return null
   }
 
   const processMessage = useCallback(
@@ -537,13 +311,15 @@ export default function ChatInterface() {
 
       try {
         let responseContent = ""
-        const messageType = getMessageType(content)
+        const componentType = getComponentType(content)
 
-        // Check for component queries using the unified detection
-        if (messageType === "profile") {
+        console.log("Component type detected:", componentType)
+        console.log("Should go to RAG:", shouldGoToRAG(content))
+
+        // Handle component responses
+        if (componentType === "profile") {
           responseContent = "Here's my profile:"
 
-          // Add immediate follow-up response for profile
           setTimeout(() => {
             const followUpMessage: Message = {
               id: generateUniqueId(),
@@ -552,13 +328,12 @@ export default function ChatInterface() {
                 "That's me in a nutshell! 👆 I'm passionate about creating innovative solutions and always excited to take on new challenges. Love working on projects that make a real impact! \n\nWhat kind of projects are you working on?",
               timestamp: new Date(),
             }
-
             setMessages((prev) => [...prev, followUpMessage])
           }, 1000)
-        } else if (messageType === "projects") {
+
+        } else if (componentType === "projects") {
           responseContent = "Here are some of my recent projects:"
 
-          // Add immediate follow-up response for projects
           setTimeout(() => {
             const followUpMessage: Message = {
               id: generateUniqueId(),
@@ -567,13 +342,12 @@ export default function ChatInterface() {
                 "These are some of my favorite projects I've worked on! Each one taught me something new and pushed my skills further. I love building things that solve real problems 🚀\n\nWhich project caught your eye?",
               timestamp: new Date(),
             }
-
             setMessages((prev) => [...prev, followUpMessage])
           }, 1000)
-        } else if (messageType === "skills") {
+
+        } else if (componentType === "skills") {
           responseContent = "Here are my skills and expertise:"
 
-          // Add Gemini-generated follow-up response for skills
           setTimeout(async () => {
             try {
               const followUpResponse = await fetch("/api/chat", {
@@ -588,7 +362,7 @@ export default function ChatInterface() {
               const followUpData = await followUpResponse.json()
               const followUpContent =
                 followUpData.response ||
-                "You can check out all my skills above! I've got a mix of hard skills like coding in various languages and soft skills like communication and problem-solving. Pretty handy, right? 😄\n\nWhat skills are you looking for in a developer?"
+                "You can check out all my skills above! I've got a mix of **hard skills** like coding in various languages and **soft skills** like communication and problem-solving. Pretty handy, right? 😄\n\nWhat skills are you looking for in a developer?"
 
               const followUpMessage: Message = {
                 id: generateUniqueId(),
@@ -596,22 +370,21 @@ export default function ChatInterface() {
                 content: followUpContent,
                 timestamp: new Date(),
               }
-
               setMessages((prev) => [...prev, followUpMessage])
             } catch (error) {
               console.error("Error getting follow-up response:", error)
-              // Fallback to hardcoded message if API fails
               const fallbackMessage: Message = {
                 id: generateUniqueId(),
                 role: "assistant",
                 content:
-                  "You can check out all my skills above! I've got a mix of hard skills like coding in various languages and soft skills like communication and problem-solving. Pretty handy, right? 😄\n\nWhat skills are you looking for in a developer?",
+                  "You can check out all my skills above! I've got a mix of **hard skills** like coding in various languages and **soft skills** like communication and problem-solving. Pretty handy, right? 😄\n\nWhat skills are you looking for in a developer?",
                 timestamp: new Date(),
               }
               setMessages((prev) => [...prev, fallbackMessage])
             }
           }, 1000)
-        } else if (messageType === "contact") {
+
+        } else if (componentType === "contact") {
           responseContent = "Here's how you can reach me:"
 
           setTimeout(() => {
@@ -622,10 +395,10 @@ export default function ChatInterface() {
                 "That's my main email above! 📬 Feel free to click on it - the link works and will open your email client directly. I'm always excited to connect with new people and discuss potential opportunities, collaborations, or just have a chat about tech!\n\nWhat would you like to talk about?",
               timestamp: new Date(),
             }
-
             setMessages((prev) => [...prev, followUpMessage])
           }, 1000)
-        } else if (messageType === "resume") {
+
+        } else if (componentType === "resume") {
           responseContent = "Here's my resume - you can download it:"
 
           setTimeout(() => {
@@ -636,10 +409,10 @@ export default function ChatInterface() {
                 "Click the download button above to get my latest resume! 📄 It includes all my experience, projects, and technical skills in a neat PDF format.\n\nAny specific role or opportunity you have in mind?",
               timestamp: new Date(),
             }
-
             setMessages((prev) => [...prev, followUpMessage])
           }, 1000)
-        } else if (messageType === "fun") {
+
+        } else if (componentType === "fun") {
           responseContent = "Check out my Kedarnath trek adventure:"
 
           setTimeout(() => {
@@ -650,29 +423,26 @@ export default function ChatInterface() {
                 "That was such an incredible experience! 🏔️ Kedarnath is one of those places that really tests your limits and rewards you with breathtaking views. The journey was challenging but so worth it!\n\nDo you enjoy trekking or outdoor adventures too?",
               timestamp: new Date(),
             }
-
             setMessages((prev) => [...prev, followUpMessage])
           }, 1000)
-        } else if (messageType === "more") {
-          // For "more" queries, we don't add a text message, just show the drawer directly
-          responseContent = "" // No text message
 
-          // Add the more component immediately without any text
+        } else if (componentType === "more") {
+          // For "more" queries, show the drawer directly without text
           setTimeout(() => {
             const moreMessage: Message = {
               id: generateUniqueId(),
               role: "assistant",
-              content: "", // Empty content since we're showing the drawer directly
+              content: "",
               timestamp: new Date(),
               type: "more",
             }
-
             setMessages((prev) => [...prev, moreMessage])
             setIsLoading(false)
             processingRef.current.delete(content)
           }, 300)
-          return // Early return to avoid the normal flow
-        } else if (messageType === "internship") {
+          return
+
+        } else if (componentType === "internship") {
           responseContent = "Here's my internship availability and what I'm looking for:"
 
           setTimeout(() => {
@@ -680,14 +450,14 @@ export default function ChatInterface() {
               id: generateUniqueId(),
               role: "assistant",
               content:
-                "I'm actively looking for summer 2026 internships and part-time opportunities! 🚀 I'm passionate about AI/ML and full-stack development, and I'd love to contribute to innovative projects. Feel free to reach out if you think I'd be a good fit for your team!\n\nWhat kind of role or project are you working on?",
+                "I'm actively looking for **summer 2026 internships** and part-time opportunities! 🚀 I'm passionate about **AI/ML** and **full-stack development**, and I'd love to contribute to innovative projects. Feel free to reach out if you think I'd be a good fit for your team!\n\nWhat kind of role or project are you working on?",
               timestamp: new Date(),
             }
-
             setMessages((prev) => [...prev, followUpMessage])
           }, 1000)
-        }
-        // Regular API call for all other queries (including philosophy, experience, etc.)
+
+        } 
+        // All other queries go to RAG (including detailed questions)
         else {
           try {
             const response = await fetch("/api/chat", {
@@ -707,10 +477,8 @@ export default function ChatInterface() {
           }
         }
 
-        console.log("Message type detected:", messageType)
-
-        // Add assistant response immediately for special types, with a small delay for API responses
-        const delay = messageType ? 500 : 100
+        // Add assistant response
+        const delay = componentType ? 500 : 100
 
         setTimeout(() => {
           const assistantMessage: Message = {
@@ -718,7 +486,7 @@ export default function ChatInterface() {
             role: "assistant",
             content: responseContent,
             timestamp: new Date(),
-            ...(messageType && { type: messageType }),
+            ...(componentType && { type: componentType as "profile" | "projects" | "skills" | "contact" | "resume" | "fun" | "more" | "internship" }),
           }
 
           console.log("Adding assistant message:", assistantMessage)
@@ -726,6 +494,7 @@ export default function ChatInterface() {
           setIsLoading(false)
           processingRef.current.delete(content)
         }, delay)
+
       } catch (error) {
         console.error("Error processing message:", error)
         setIsLoading(false)
@@ -751,7 +520,6 @@ export default function ChatInterface() {
 
       setMessages((prev) => {
         const newMessages = [...prev, userMessage]
-        // Process the message with the updated messages array
         setTimeout(() => processMessage(content, newMessages), 50)
         return newMessages
       })
