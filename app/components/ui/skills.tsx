@@ -23,6 +23,7 @@ import {
   Video,
   Presentation,
   Zap,
+  Cloud,
 } from "lucide-react"
 
 const Skills = () => {
@@ -38,8 +39,6 @@ const Skills = () => {
         { name: "Tailwind CSS", icon: <Palette className="h-4 w-4" /> },
         { name: "Next.js", icon: <Globe className="h-4 w-4" /> },
         { name: "React", icon: <Code className="h-4 w-4" /> },
-        { name: "Supabase", icon: <Database className="h-4 w-4" /> },
-        { name: "Firebase", icon: <Database className="h-4 w-4" /> },
       ],
     },
     {
@@ -48,18 +47,28 @@ const Skills = () => {
       skills: [
         { name: "Python", icon: <Terminal className="h-4 w-4" /> },
         { name: "OpenCV", icon: <Eye className="h-4 w-4" /> },
-        { name: "Keras", icon: <Brain className="h-4 w-4" /> },
         { name: "YOLOv5", icon: <Eye className="h-4 w-4" /> },
+        { name: "Keras", icon: <Brain className="h-4 w-4" /> },
         { name: "MediaPipe", icon: <Camera className="h-4 w-4" /> },
         { name: "LangGraph", icon: <Brain className="h-4 w-4" /> },
         { name: "LLMs (Gemini, GPT-4, Claude)", icon: <MessageSquare className="h-4 w-4" /> },
         { name: "Prompt Engineering", icon: <Brain className="h-4 w-4" /> },
         { name: "RAG (Retrieval-Augmented Generation)", icon: <Brain className="h-4 w-4" /> },
-        { name: "Vector DBs (Weaviate, Pinecone)", icon: <Database className="h-4 w-4" /> },
+        { name: "Vector DBs (FAISS, ChromaDB)", icon: <Database className="h-4 w-4" /> },
         { name: "Vosk & IndicTrans2", icon: <MessageSquare className="h-4 w-4" /> },
         { name: "Prisma", icon: <Database className="h-4 w-4" /> },
         { name: "PostgreSQL", icon: <Database className="h-4 w-4" /> },
+        { name: "MySQL", icon: <Database className="h-4 w-4" /> },
         { name: "Git", icon: <GitBranch className="h-4 w-4" /> },
+      ],
+    },
+    {
+      category: "Cloud & DevOps",
+      icon: <Cloud className="h-5 w-5" />,
+      skills: [
+        { name: "Firebase", icon: <Database className="h-4 w-4" /> },
+        { name: "Supabase", icon: <Database className="h-4 w-4" /> },
+        { name: "Vercel", icon: <Globe className="h-4 w-4" /> },
         { name: "Docker", icon: <Container className="h-4 w-4" /> },
       ],
     },

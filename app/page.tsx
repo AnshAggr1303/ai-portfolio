@@ -4,17 +4,17 @@ import FluidCursor from "./components/FluidCursor"
 import { Button } from "@/components/ui/button"
 import { GithubButton } from "@/components/ui/github-button"
 import { motion } from "framer-motion"
-import { ArrowRight, BriefcaseBusiness, Laugh, Layers, PartyPopper, UserRoundSearch } from "lucide-react"
+import { ArrowRight, BriefcaseBusiness, Laugh, Layers, PartyPopper, UserRoundSearch, Loader2 } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
 
 /* ---------- quick-question data ---------- */
 const questions = {
-  Me: "Who are you? I want to know more about you.",
-  Projects: "What are your projects? What are you working on right now?",
-  Skills: "What are your skills? Give me a list of your soft and hard skills.",
-  Fun: "What's the craziest thing you've ever done? What are your hobbies?",
+  Me: "Who are you?",
+  Projects: "What are your projects? ",
+  Skills: "What are your skills? ",
+  Fun: "What's the craziest thing you've ever done?",
   Contact: "How can I contact you?",
 } as const
 
@@ -29,10 +29,20 @@ const questionConfig = [
 /* ---------- component ---------- */
 export default function Home() {
   const [input, setInput] = useState("")
+  const [isNavigating, setIsNavigating] = useState(false)
+  const [loadingQuery, setLoadingQuery] = useState<string | null>(null)
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const goToChat = (query: string) => router.push(`/chat?query=${encodeURIComponent(query)}`)
+  const goToChat = async (query: string) => {
+    setIsNavigating(true)
+    setLoadingQuery(query)
+    
+    // Small delay to show loading state
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
+    router.push(`/chat?query=${encodeURIComponent(query)}`)
+  }
 
   /* hero animations */
   const topElementVariants = {
@@ -40,7 +50,7 @@ export default function Home() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "ease", duration: 0.8 },
+      transition: { ease: "easeOut", duration: 0.8 },
     },
   }
   const bottomElementVariants = {
@@ -48,12 +58,45 @@ export default function Home() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "ease", duration: 0.8, delay: 0.2 },
+      transition: { ease: "easeOut", duration: 0.8, delay: 0.2 },
     },
   }
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pb-10 md:pb-20">
+      {/* Loading Overlay */}
+      {isNavigating && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center"
+        >
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="flex items-center justify-center"
+          >
+            {/* Simple Professional Loader */}
+            <div className="relative">
+              {/* Outer ring */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                className="w-20 h-20 border-4 border-slate-100/30 border-t-blue-300/80 rounded-full"
+              />
+              
+              {/* Inner ring */}
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-3 w-14 h-14 border-3 border-slate-50/20 border-t-blue-200/60 rounded-full"
+              />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
       {/* big blurred footer word */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden">
         <div
@@ -77,9 +120,10 @@ export default function Home() {
       <div className="absolute top-6 left-6 z-20">
         <motion.button
           onClick={() => goToChat("Are you looking for an internship?")}
-          className="relative flex cursor-pointer items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-black shadow-md transition-transform"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          disabled={isNavigating}
+          className="relative flex cursor-pointer items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-black shadow-md transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+          whileHover={!isNavigating ? { scale: 1.05 } : {}}
+          whileTap={!isNavigating ? { scale: 0.95 } : {}}
         >
           {/* Green pulse dot */}
           <span className="relative flex h-2 w-2">
@@ -135,7 +179,7 @@ export default function Home() {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            if (input.trim()) goToChat(input.trim())
+            if (input.trim() && !isNavigating) goToChat(input.trim())
           }}
           className="relative w-full max-w-lg"
         >
@@ -146,15 +190,20 @@ export default function Home() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask me anything…"
-              className="w-full border-none bg-transparent text-base text-black placeholder:text-gray-500 focus:outline-none"
+              disabled={isNavigating}
+              className="w-full border-none bg-transparent text-base text-black placeholder:text-gray-500 focus:outline-none disabled:opacity-50"
             />
             <button
               type="submit"
-              disabled={!input.trim()}
+              disabled={!input.trim() || isNavigating}
               aria-label="Submit question"
               className="flex items-center justify-center rounded-full bg-[#0171E3] p-2.5 text-white transition-colors hover:bg-blue-600 disabled:opacity-70 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
-              <ArrowRight className="h-5 w-5" />
+              {isNavigating && loadingQuery === input.trim() ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <ArrowRight className="h-5 w-5" />
+              )}
             </button>
           </div>
         </form>
@@ -165,12 +214,22 @@ export default function Home() {
             <Button
               key={key}
               onClick={() => goToChat(questions[key])}
+              disabled={isNavigating}
               variant="outline"
-              className="border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/30 py-8 shadow-none backdrop-blur-lg active:scale-95 md:p-10"
+              className="border-border hover:bg-border/30 aspect-square w-full cursor-pointer rounded-2xl border bg-white/30 py-8 shadow-none backdrop-blur-lg active:scale-95 md:p-10 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
             >
               <div className="flex h-full flex-col items-center justify-center gap-1 text-gray-700">
-                <Icon size={22} strokeWidth={2} color={color} />
-                <span className="text-xs font-medium sm:text-sm">{key}</span>
+                {isNavigating && loadingQuery === questions[key] ? (
+                  <>
+                    <Loader2 size={22} className="animate-spin" color={color} />
+                    <span className="text-xs font-medium sm:text-sm">Loading...</span>
+                  </>
+                ) : (
+                  <>
+                    <Icon size={22} strokeWidth={2} color={color} />
+                    <span className="text-xs font-medium sm:text-sm">{key}</span>
+                  </>
+                )}
               </div>
             </Button>
           ))}

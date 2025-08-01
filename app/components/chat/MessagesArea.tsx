@@ -119,6 +119,15 @@ const MarkdownComponents = {
 }
 
 export default function MessagesArea({ messages, isLoading, messagesEndRef, onSendMessage }: MessagesAreaProps) {
+
+  // Add this debug logging
+  console.log("🎨 MessagesArea rendering with messages:", messages.map(m => ({ 
+    id: m.id, 
+    role: m.role, 
+    type: m.type, 
+    hasContent: !!m.content,
+    content: m.content?.substring(0, 50) 
+  })))
   // Helper function to determine if chat icon should be shown
   const shouldShowChatIcon = (currentIndex: number, messages: Message[]): boolean => {
     if (currentIndex === 0) return true // Always show for first message
