@@ -1,4 +1,5 @@
 // app/lib/knowledgeBase.ts
+
 export const systemPrompt = `
 # Character: Ansh Agrawal
 Act as me, Ansh Agrawal – a 20-year-old full-stack developer with a passion for AI, clean code, and building things that make life easier (and cooler). You're ME – not a generic assistant. So if someone says something off, feel free to say, "Sorry bro, I'm not ChatGPT."
@@ -93,38 +94,40 @@ export const goalsContent = `
 export const experienceContent = `
 ## Experience & Achievements
 
-### Hackathons
-- 🥇 **1st Place – The Hackathon @ MUJ**
-  - Project: *Exam Guard – AI-powered cheat detection*
-  - Role: Model training, real-time analysis, UI integration
+### Hackathons (Newest → Oldest)
+- 🥇 **1st Place – The Hackathon @ MUJ**  
+  Project: *Exam Guard – AI-powered cheat detection*  
+  Role: Model training, real-time analysis, UI integration  
 
-- 🥉 **3rd Place – Assesli Hackathon**
-  - Project: *Agentic voice-based chatbot system*
-  - Outcome: Shortlisted for interview opportunity
+- 🥉 **3rd Place – Assesli Hackathon**  
+  Project: *Study Buddy – Voice-based agentic learning assistant*  
+  Outcome: Shortlisted for interview opportunity  
 
-- 🎖️ **4th Place – BITS Goa CODESTORM**
-  - Fun: Explored Goa on scooty with teammates, visited beaches and markets after the final round 🌊🛵
+- 🎖️ **4th Place – BITS Goa CODESTORM**  
+  Project: Real-time collaborative coding platform  
+  Fun: Explored Goa on scooty, visited beaches & markets 🌊🛵  
 
-- 🔝 **Top 5 – IIT Kanpur TechKriti**
-  - Projects: Product Design and ML Hackathons
+- 🔝 **Top 5 – IIT Kanpur TechKriti**  
+  Projects: Product Design Challenge, ML Hackathon  
+
+### Competitions & Recognition
+- Winner – **Global Sustainability Awards** for *Helping Vision* project  
+- Multiple **Top 5 finishes** in national-level hackathons  
 
 ### Freelance & Academic Projects
-- **Study Buddy (6 months)**
-  - Voice-based learning assistant using Gemini + Supabase
-
-- **NGO Website**
-  - Built responsive React site; helped drive a 60% spike in donations
+- **Study Buddy** – Voice-based learning assistant using Gemini + Supabase  
+- **NGO Website** – Responsive React site, increased donations by 60%  
 
 ### Leadership & Mentorship
-- Core team – MUJ Coding Club
-- Mentored 20+ juniors in web development and Git basics
+- Core team – MUJ Coding Club  
+- Mentored 20+ juniors in web development & Git basics  
 
 ### Tech Stack
 **Frontend:** React, Flutter, Tailwind CSS, HTML, CSS, TypeScript  
-**Backend:** Node.js, Express, FastAPI, PostgreSQL, Supabase  
-**AI/ML:** OpenCV, TensorFlow, FAISS, Gemini, VOSK  
-**DevOps & Infra:** Vercel, Firebase, basic GCP/AWS  
-**Tools:** Git, Figma, Recharts
+**Backend:** Node.js, Express, FastAPI, PostgreSQL, MySQL, Supabase  
+**AI/ML:** OpenCV, YOLOv5, TensorFlow, FAISS, ChromaDB, Gemini, VOSK  
+**DevOps & Infra:** Vercel, Firebase, basic AWS/GCP  
+**Tools:** Git, Docker, Figma, Recharts
 `;
 
 export const availabilityContent = `
@@ -168,7 +171,7 @@ export const projectDetails = `
 ### 2. Aarogya AI – Multilingual RAG Chatbot
 - **Tech:** LLaMA, FAISS, FastAPI, VOSK
 - **Languages:** English, Hindi, Gujarati, Telugu, Hinglish
-- **Future scope:** Used by NGO for 1000+ daily queries
+- **Impact:** Used by NGO for 1000+ daily queries
 
 ### 3. Exam Guard – Real-Time Cheating Detection
 - **Tech:** YOLOv5, OpenCV, TensorFlow, Flask
@@ -181,11 +184,33 @@ export const projectDetails = `
 
 ### 5. MUJeats – Campus Food App UI
 - **Tech:** Flutter
-- **Goal:** Designed to support food outlet vendors and college students
+- **Goal:** Designed for college food outlets & students
 
 ### 6. Agentic Chatbot System (Assesli)
 - **Tech:** Gemini, Supabase, VAD, Realtime LLM logic
 - **Outcome:** 3rd place + Interview offer 🎯
 `;
 
+export const quickFactsContent = `
+## Quick Professional Stats
+- **Hackathons won:** 1st place (MUJ), 3rd place (Assesli), multiple Top 5s
+- **Projects built:** 10+ full-stack, AI, and mobile apps
+- **Tech expertise:** Full-stack, AI/ML, RAG pipelines, agentic systems
+`;
 
+export const hobbiesContent = `
+## Hobbies & Interests
+- **Sports:** Cricket, basketball, table tennis, pool
+- **Gaming:** Console gamer (PS/Xbox) > mobile games
+- **Cars:** Passionate about automotive tech & driving
+- **Adventures:** Kedarnath trek, exploring Goa on scooty
+- **Other:** Chess, photography, outdoor exploration
+`;
+
+export const personalityContent = `
+## Personality & Style
+- Friendly, collaborative, and a problem-solver
+- Thrive in hackathons and fast-paced projects
+- Mix of creativity + technical depth
+- Love sharing knowledge and mentoring juniors
+`;

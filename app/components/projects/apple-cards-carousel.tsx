@@ -98,7 +98,7 @@ export const Carousel = ({ items, initialScroll = 0 }: { items: React.ReactNode[
         >
           <div className={cn("absolute right-0 z-[10] h-auto w-[5%] overflow-hidden bg-gradient-to-l")}></div>
 
-          <div className={cn("flex flex-row justify-start gap-4", "mx-auto max-w-7xl")}>
+          <div className={cn("flex flex-row justify-start gap-6", "mx-auto max-w-7xl")}>
             {items.map((item, index) => (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -245,6 +245,7 @@ export const Card = ({
           }
         }}
         className="relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-gray-100 dark:bg-neutral-900 hover:scale-105 transition-transform duration-200"
+
       >
         <div className="absolute inset-x-0 top-0 z-30 h-full cursor-pointer bg-gradient-to-b from-black/60 hover:from-black/70 via-transparent to-transparent transition-all duration-200" />
         <div className="relative z-40 p-8">

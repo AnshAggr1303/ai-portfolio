@@ -22,39 +22,97 @@ export class ConversationMemory {
     conversationFlow: []
   }
 
-  // Component-specific data that should be available for context
+  // Updated COMPONENT_DATA with reordered projects + full details + removed Trade Sphere
   private static COMPONENT_DATA = {
     fun: {
-      adventures: ["Kedarnath Trek", "Mountain Photography", "Outdoor Adventures"],
+      adventures: ["Kedarnath Trek", "BITS Goa Exploration"],
       highlights: {
-        "kedarnath": {
+        kedarnath: {
           description: "Epic 22km trek to Kedarnath Temple",
           challenges: "High altitude, weather conditions, physical endurance",
-          experience: "Life-changing spiritual and physical journey",
+          experience: "Life-changing spiritual and physical journey with friends",
           photos: "Stunning mountain landscapes and temple views"
+        },
+        bits_goa: {
+          description: "Explored Goa on scooty during BITS Goa Hackathon finals",
+          experience: "Beaches, markets, and bonding with the team after intense coding rounds"
         }
       }
     },
     projects: {
-      featured: ["Study Buddy", "RAG Chatbot", "AI Cheat Detection", "Helping Vision"],
+      // Fully ordered and matched
+      featured: [
+        "Study Buddy",
+        "Aarogya AI – Multilingual RAG Chatbot",
+        "Exam Guard – AI Cheat Detection",
+        "DATAI – Natural Language to DB",
+        "MUJeats – Food Ordering App (UI)",
+        "Agentic Chatbot System (Assesli)",
+        "Helping Vision"
+      ],
       details: {
         "study_buddy": {
-          description: "AI-powered study companion",
+          description: "AI-powered, voice-enabled study companion",
           duration: "6 months development",
-          impact: "Helped 200+ students",
-          tech: "React, Python, AI/ML"
+          impact: "Helped 200+ students improve study efficiency",
+          tech: "Next.js, Supabase, Gemini AI, STT"
+        },
+        "aarogya_ai": {
+          description: "Multilingual RAG chatbot for health assistance",
+          duration: "4 months development",
+          impact: "Handles 1000+ queries/day for NGO",
+          tech: "LLaMA, FAISS, FastAPI, VOSK, Python"
+        },
+        "exam_guard": {
+          description: "AI cheating detection system for online & offline exams",
+          duration: "2 months development",
+          impact: "Won 1st prize at MUJ hackathon",
+          tech: "YOLOv5, OpenCV, TensorFlow"
+        },
+        "datai": {
+          description: "Natural language to database insights",
+          duration: "3 weeks build for hackathon",
+          impact: "Improved query handling and database accessibility",
+          tech: "Next.js, Supabase, Gemini AI, Recharts"
+        },
+        "mujeats": {
+          description: "Campus food ordering app UI",
+          duration: "2 weeks development",
+          impact: "User-friendly food ordering experience for MUJ students",
+          tech: "Flutter"
+        },
+        "agentic_chatbot_system": {
+          description: "Real-time voice chatbot with LLM integration",
+          duration: "Hackathon project",
+          impact: "3rd place in Assesli Hackathon + interview offer",
+          tech: "Gemini AI, Voice Integration, AWS"
+        },
+        "helping_vision": {
+          description: "Smart glasses for visually impaired",
+          duration: "Prototype stage",
+          impact: "Helped 50+ people in NGO testing phase",
+          tech: "Arduino, Ultrasonic Sensors, TTS"
         }
       }
     },
     skills: {
-      categories: ["Frontend", "Backend", "AI/ML", "Tools"],
-      favorites: ["React", "Python"],
-      expertise: "React for UI magic, Python for AI wizardry"
+      categories: ["Frontend", "Backend", "AI/ML", "Tools", "Databases"],
+      favorites: ["React", "Python", "Gemini AI", "YOLOv5", "OpenCV"],
+      expertise: "Frontend with React & Tailwind, AI/ML with Python + CV models"
     },
     experience: {
-      hackathons: ["MUJ Hackathon Winner"],
-      achievements: ["24-hour coding marathon", "AI project victory"],
-      professional: "Student + Developer life in Gurgaon"
+      hackathons: [
+        "Assesli Hackathon – 3rd Place",
+        "MUJ Hackathon – 1st Prize",
+        "BITS Goa CODESTORM – 4th Place",
+        "IIT Kanpur TechKriti – Top 5"
+      ],
+      achievements: [
+        "Multiple hackathon podium finishes",
+        "Developed multilingual AI solutions",
+        "Built award-winning AI cheating detection system"
+      ],
+      professional: "BTech CSE student at MUJ with strong project & hackathon experience"
     }
   }
 
@@ -74,7 +132,6 @@ export class ConversationMemory {
       console.log("💾 Updated component memory:", message.type)
     }
 
-    // Add user queries to flow
     if (message.role === 'user') {
       this.context.conversationFlow.push(`query_${message.content.slice(0, 20)}`)
     }
@@ -169,7 +226,6 @@ export class ConversationMemory {
     return (this.COMPONENT_DATA as any)[componentType] || {}
   }
 
-  // Enhanced context for specific queries
   static getEnhancedContext(query: string, componentType?: ComponentType): string {
     let context = ""
     
@@ -177,7 +233,6 @@ export class ConversationMemory {
       context += this.buildContextString(componentType)
     }
 
-    // Add specific context based on query patterns
     if (/craziest|crazy|adventure/i.test(query) && this.hasRecentComponent('fun')) {
       context += `\nQUERY CONTEXT: User is asking about crazy/adventure experiences after seeing the fun component with Kedarnath trek details.\n`
     }
@@ -193,3 +248,13 @@ export class ConversationMemory {
     return context
   }
 }
+
+/*
+CHANGES MADE:
+1. Removed "Trade Sphere" from project list completely.
+2. Reordered `projects.featured` and `projects.details` so they match exactly.
+3. Added missing detailed entries for all featured projects.
+4. Updated skills favorites with latest stack.
+5. Updated adventures to match latest life experiences (Kedarnath + BITS Goa).
+6. Updated `experience` section to reflect all major hackathons + achievements.
+*/

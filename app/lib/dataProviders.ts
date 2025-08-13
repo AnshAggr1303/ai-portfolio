@@ -5,49 +5,50 @@ import { ProjectData, SkillCategory, Achievement } from "./types"
 export class DataProviders {
   // Utility method to get component-specific project data
   static getProjectData(): ProjectData[] {
-    return [
-      {
-        name: "Study Buddy",
-        description: "Voice-based agentic learning assistant",
-        tech: ["Next.js", "Gemini AI", "Supabase", "Speech Recognition"],
-        impact: "200+ active users, 40% study efficiency improvement",
-        status: "Production",
-        category: "AI/Education",
-      },
-      {
-        name: "Aarogya AI",
-        description: "Multilingual RAG health chatbot",
-        tech: ["LLaMA", "FAISS", "FastAPI", "VOSK", "Python"],
-        impact: "1000+ multilingual health queries/day",
-        status: "Deployed",
-        category: "AI/NLP",
-      },
-      {
-        name: "Exam Guard",
-        description: "Real-time AI cheat detection system",
-        tech: ["YOLOv5", "OpenCV", "MediaPipe", "Flask", "TensorFlow"],
-        impact: "Used in 3+ universities, 98.5% accuracy",
-        status: "Production",
-        category: "AI/Computer Vision",
-      },
-      {
-        name: "MUJeats",
-        description: "Zomato-style food ordering app UI",
-        tech: ["Flutter", "Supabase", "Firebase", "Dart"],
-        impact: "Designed for campus outlets, scalable backend-ready UI",
-        status: "Frontend Complete",
-        category: "Mobile/UX",
-      },
-      {
-        name: "DATAI",
-        description: "Natural language interface for database querying",
-        tech: ["Next.js", "Supabase", "LangGraph", "Gemini API"],
-        impact: "Flexible AI querying for SQL databases",
-        status: "Live",
-        category: "AI/Tools",
-      },
-    ]
-  }
+  return [
+    {
+      name: "Study Buddy",
+      description: "Voice-based agentic learning assistant",
+      tech: ["Next.js", "Gemini AI", "Supabase", "Speech Recognition"],
+      impact: "This project can be used by companies who are making their own SLM for edtech.",
+      status: "Deployed",
+      category: "AI/Education",
+    },
+    {
+      name: "Aarogya AI",
+      description: "Multilingual RAG health chatbot",
+      tech: ["LLaMA", "FAISS", "FastAPI", "VOSK", "Python"],
+      impact: "Prototype stage; potential for NGO healthcare use.",
+      status: "Not deployed",
+      category: "AI/NLP",
+    },
+    {
+      name: "Exam Guard",
+      description: "Real-time AI cheat detection system",
+      tech: ["YOLOv5", "OpenCV", "MediaPipe", "Flask", "TensorFlow"],
+      impact: "Built for university-level AI proctoring.",
+      status: "Not deployed",
+      category: "AI/Computer Vision",
+    },
+    {
+      name: "MUJeats",
+      description: "Zomato-style food ordering app UI",
+      tech: ["Flutter", "Supabase", "Firebase", "Dart"],
+      impact: "UI-ready for backend integration.",
+      status: "Not deployed",
+      category: "Mobile/UX",
+    },
+    {
+      name: "DATAI",
+      description: "Natural language interface for database querying",
+      tech: ["Next.js", "Supabase", "LangGraph", "Gemini API"],
+      impact: "Deployed demo for SQL querying and visualization.",
+      status: "Deployed",
+      category: "AI/Tools",
+    },
+  ]
+}
+
 
   // Utility method to get skills data
   static getSkillsData(): Record<string, SkillCategory> {
@@ -70,6 +71,7 @@ export class DataProviders {
           { name: "FastAPI", level: 80, experience: "1+ year" },
           { name: "Supabase", level: 85, experience: "1+ year" },
           { name: "PostgreSQL", level: 75, experience: "2+ years" },
+          { name: "MySQL", level: 70, experience: "1+ year" },
         ],
       },
       aiml: {

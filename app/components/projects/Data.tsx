@@ -9,13 +9,13 @@ const PROJECT_CONTENT: ProjectProps[] = [
   {
     title: "Study Buddy",
     description:
-      "A real-time voice assistant for academic support with contextual memory, agentic behavior, and web search. Built using Gemini 2.0/2.5, Supabase, and DuckDuckGo API.",
+      "A real-time voice assistant for academic support with contextual memory, agentic behavior, and web search. Built using Gemini 2.0/2.5, Supabase, and LangGraph.",
     techStack: [
       "Next.js",
       "Gemini 2.0/2.5",
       "Supabase",
       "VAD",
-      "DuckDuckGo API",
+      "LangGraph",
       "Ngrok",
       "REST APIs",
       "Web Speech API",
@@ -31,6 +31,8 @@ const PROJECT_CONTENT: ProjectProps[] = [
       { src: "/study-buddy-1.png", alt: "Study Buddy Welcome Interface" },
       { src: "/study-buddy-2.png", alt: "Study Buddy Voice Features" },
       { src: "/study-buddy-3.png", alt: "Study Buddy Dashboard" },
+      { src: "/study-buddy-4.png", alt: "Study Buddy Advanced Features" },
+      { src: "/study-buddy-5.png", alt: "Study Buddy Backpropagation Explanation", aspectRatio: "square" },
     ],
   },
   {
@@ -122,7 +124,7 @@ const PROJECT_CONTENT: ProjectProps[] = [
       { src: "/mujeats-2.jpeg", alt: "MUJeats Menu Screen" },
       { src: "/mujeats-3.jpeg", alt: "MUJeats Order Tracking" },
     ],
-    isMobile: true, // Special flag for mobile projects
+    isMobile: true,
   },
 ]
 
@@ -132,7 +134,7 @@ interface ProjectProps {
   techStack?: string[]
   date?: string
   links?: { name: string; url: string }[]
-  images?: { src: string; alt: string }[]
+  images?: { src: string; alt: string; aspectRatio?: "video" | "square" | "portrait" }[]
   isMobile?: boolean
 }
 
@@ -171,7 +173,7 @@ const ProjectContent = ({ project }: { project: ProjectProps }) => {
         </div>
       </div>
 
-      {projectData.links?.length > 0 && (
+      {projectData.links && projectData.links.length > 0 && (
         <div className="mb-24">
           <div className="px-6 mb-4 flex items-center gap-2">
             <h3 className="text-sm tracking-wide text-black uppercase dark:text-white font-semibold">Links</h3>
@@ -195,28 +197,43 @@ const ProjectContent = ({ project }: { project: ProjectProps }) => {
         </div>
       )}
 
-      {projectData.images?.length > 0 && (
+      {projectData.images && projectData.images.length > 0 && (
         <div className="space-y-6">
           <div
-            className={`grid gap-4 ${projectData.isMobile ? "grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto" : "grid-cols-1"}`}
+            className={`grid gap-8 ${
+              projectData.isMobile 
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center max-w-7xl mx-auto" 
+                : "grid-cols-1"
+            }`}
           >
-            {projectData.images.map((image, index) => (
-              <div
-                key={index}
-                className={`relative overflow-hidden ${
-                  projectData.isMobile
-                    ? "aspect-[9/16] rounded-3xl max-w-xs mx-auto" // Mobile format with rounded corners
-                    : "aspect-video rounded-2xl" // Regular format
-                }`}
-              >
-                <Image
-                  src={image.src || "/placeholder.svg"}
-                  alt={image.alt}
-                  fill
-                  className="object-cover transition-transform"
-                />
-              </div>
-            ))}
+            {projectData.images.map((image, index) => {
+              // Determine aspect ratio for each image
+              const getAspectRatio = () => {
+                if (projectData.isMobile) return "aspect-[9/16]"
+                if (image.aspectRatio === "square") return "aspect-square"
+                if (image.aspectRatio === "portrait") return "aspect-[3/4]"
+                return "aspect-video" // default landscape
+              }
+
+              return (
+                <div
+                  key={index}
+                  className={`relative overflow-hidden ${
+                    projectData.isMobile
+                      ? "aspect-[9/16] rounded-2xl w-full max-w-sm shadow-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" 
+                      : `${getAspectRatio()} rounded-2xl`
+                  }`}
+                >
+                  <Image
+                    src={image.src || "/placeholder.svg"}
+                    alt={image.alt}
+                    fill
+                    className="object-cover transition-transform hover:scale-105"
+                    sizes={projectData.isMobile ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" : "100vw"}
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
       )}

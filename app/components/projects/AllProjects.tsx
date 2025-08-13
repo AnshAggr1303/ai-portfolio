@@ -10,7 +10,7 @@ export default function AllProjects() {
 
   return (
     <div className="w-full h-full pt-8">
-      <h2 className="max-w-7xl mx-auto text-xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
+      <h2 className="max-w-7xl mx-auto text-xl md:text-3xl font-bold font-sans project-heading">
         My Projects
       </h2>
       <Carousel items={cards} />

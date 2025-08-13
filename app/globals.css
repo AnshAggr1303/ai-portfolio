@@ -58,6 +58,15 @@
   }
 }
 
+/* Custom Project Heading Class */
+.project-heading {
+  color: hsl(222.2, 84%, 4.9%); /* Dark color for light mode */
+}
+
+.dark .project-heading {
+  color: hsl(210, 40%, 98%); /* Light color for dark mode */
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

@@ -4,8 +4,11 @@
 import ChatScreen from "./chat/ChatScreen"
 import InitialLoadingScreen from "./InitialLoadingScreen"
 import { useChatLogic } from "../hooks/useChatLogic"
+import { useRouter } from "next/navigation"
 
 export default function ChatInterface() {
+  const router = useRouter()
+  
   const {
     messages,
     setMessages,
@@ -19,6 +22,11 @@ export default function ChatInterface() {
     messagesEndRef,
     textareaRef,
   } = useChatLogic()
+
+  // Handle back navigation - always go to welcome page
+  const handleBack = () => {
+    router.push('/')
+  }
 
   // Show initial loading screen when processing first query
   if (initialLoading && messages.length === 1) {
@@ -38,6 +46,7 @@ export default function ChatInterface() {
       textareaRef={textareaRef}
       onSendMessage={handleSendMessage}
       setMessages={setMessages}
+      onBack={handleBack}
     />
   )
 }
