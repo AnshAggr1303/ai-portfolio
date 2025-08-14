@@ -102,9 +102,9 @@ const PROJECT_CONTENT: ProjectProps[] = [
     date: "2025",
     links: [],
     images: [
-      { src: "/exam-guard-1.jpeg", alt: "Exam Guard Real-time Detection System" },
-      { src: "/exam-guard-2.jpeg", alt: "Exam Guard Upload and Live Alerts Dashboard" },
-      { src: "/exam-guard-3.jpeg", alt: "Exam Guard Analytics and Alert Distribution" },
+      { src: "/exam-guard-1.jpeg", alt: "Exam Guard Real-time Detection System", aspectRatio: "video" },
+      { src: "/exam-guard-2.png", alt: "Exam Guard Upload and Live Alerts Dashboard", aspectRatio: "wide" },
+      { src: "/exam-guard-3.png", alt: "Exam Guard Analytics and Alert Distribution", aspectRatio: "wide" },
     ],
   },
   {
@@ -134,7 +134,7 @@ interface ProjectProps {
   techStack?: string[]
   date?: string
   links?: { name: string; url: string }[]
-  images?: { src: string; alt: string; aspectRatio?: "video" | "square" | "portrait" }[]
+  images?: { src: string; alt: string; aspectRatio?: "video" | "square" | "portrait" | "auto" | "wide" }[]
   isMobile?: boolean
 }
 
@@ -212,7 +212,14 @@ const ProjectContent = ({ project }: { project: ProjectProps }) => {
                 if (projectData.isMobile) return "aspect-[9/16]"
                 if (image.aspectRatio === "square") return "aspect-square"
                 if (image.aspectRatio === "portrait") return "aspect-[3/4]"
+                if (image.aspectRatio === "wide") return "aspect-[21/9]"
+                if (image.aspectRatio === "auto") return "h-auto"
                 return "aspect-video" // default landscape
+              }
+
+              const getObjectFit = () => {
+                if (image.aspectRatio === "auto") return "object-contain"
+                return "object-cover"
               }
 
               return (
@@ -221,14 +228,18 @@ const ProjectContent = ({ project }: { project: ProjectProps }) => {
                   className={`relative overflow-hidden ${
                     projectData.isMobile
                       ? "aspect-[9/16] rounded-2xl w-full max-w-sm shadow-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" 
-                      : `${getAspectRatio()} rounded-2xl`
+                      : `${getAspectRatio()} rounded-2xl ${image.aspectRatio === "auto" ? "min-h-[400px]" : ""}`
                   }`}
                 >
                   <Image
                     src={image.src || "/placeholder.svg"}
                     alt={image.alt}
-                    fill
-                    className="object-cover transition-transform hover:scale-105"
+                    fill={image.aspectRatio !== "auto"}
+                    width={image.aspectRatio === "auto" ? 800 : undefined}
+                    height={image.aspectRatio === "auto" ? 600 : undefined}
+                    className={`${getObjectFit()} transition-transform hover:scale-105 ${
+                      image.aspectRatio === "auto" ? "w-full h-auto" : ""
+                    }`}
                     sizes={projectData.isMobile ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" : "100vw"}
                   />
                 </div>

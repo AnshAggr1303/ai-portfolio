@@ -20,9 +20,10 @@ export const useChatLogic = () => {
   const searchParams = useSearchParams()
   const processingRef = useRef<Set<string>>(new Set())
 
+  // Updated scroll effect - now triggers on messages AND loading state changes
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+  }, [messages, isLoading, initialLoading]) // Added loading dependencies
 
   // Update conversation memory when messages change
   useEffect(() => {
