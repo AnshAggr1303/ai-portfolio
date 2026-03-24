@@ -42,6 +42,9 @@ export interface APIKey {
   id: string
   key: string
   isHealthy: boolean
+  permanentlyDisabled: boolean  // 403 leaked/invalid keys — never retried or health-checked
+  dailyExhausted: boolean       // 429 daily quota hit — skipped until midnight UTC
+  dailyExhaustedUntil: number   // timestamp (ms) of next midnight UTC reset
   lastUsed: number
   requestCount: number
   errorCount: number

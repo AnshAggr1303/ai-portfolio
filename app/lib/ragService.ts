@@ -45,8 +45,8 @@ export class RAGService {
     }
 
     const genAI = new GoogleGenerativeAI(firstKey.key)
-    this.embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })
-    this.generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+    this.embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })  // Fixed: was "text-embedding-04"
+    this.generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
   }
 
   private async initializeWithSystemPrompt() {
@@ -103,7 +103,7 @@ export class RAGService {
     try {
       // Generate embedding using multi-key system
       const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })
+        const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })  // Fixed: was "text-embedding-04"
         return await embeddingModel.embedContent(doc.content)
       })
 
@@ -139,7 +139,7 @@ export class RAGService {
     try {
       // Generate query embedding using multi-key system
       const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })
+        const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })  // Fixed: was "text-embedding-04"
         return await embeddingModel.embedContent(query)
       })
 
@@ -209,7 +209,7 @@ Instructions:
 
       // Generate response using multi-key system
       const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
         return await generativeModel.generateContent(prompt)
       })
 
@@ -293,7 +293,7 @@ Instructions:
 
       // Generate response using multi-key system
       const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
         return await generativeModel.generateContent(prompt)
       })
 

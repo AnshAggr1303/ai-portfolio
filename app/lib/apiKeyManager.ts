@@ -17,10 +17,9 @@ export class APIKeyManager {
   }
 
   private initializeAPIKeys() {
-    // Initialize API keys from environment variables
     const keyVariables = [
       'GEMINI_API_KEY_1',
-      'GEMINI_API_KEY_2', 
+      'GEMINI_API_KEY_2',
       'GEMINI_API_KEY_3',
       'GEMINI_API_KEY_4',
       'GEMINI_API_KEY_5',
@@ -34,6 +33,9 @@ export class APIKeyManager {
           id: `key_${index + 1}`,
           key,
           isHealthy: true,
+          permanentlyDisabled: false,   // Fix 1: track permanently dead keys
+          dailyExhausted: false,        // Fix 2: track daily quota exhaustion
+          dailyExhaustedUntil: 0,       // Fix 3: reset at midnight
           lastUsed: 0,
           requestCount: 0,
           errorCount: 0,
@@ -51,47 +53,87 @@ export class APIKeyManager {
     console.log(`Initialized ${this.apiKeys.length} API keys`)
   }
 
+  // Fix 4: Detect if a 429 error is a daily quota exhaustion vs per-minute rate limit
+  private isDailyQuotaExhausted(error: any): boolean {
+    try {
+      const errorDetails = error?.errorDetails || []
+      for (const detail of errorDetails) {
+        if (detail?.violations) {
+          for (const violation of detail.violations) {
+            if (
+              violation?.quotaId?.includes('PerDay') ||
+              violation?.quotaId?.includes('PerDayPerProject')
+            ) {
+              return true
+            }
+          }
+        }
+      }
+      // Also check error message string as fallback
+      const msg = error?.message || ''
+      if (msg.includes('PerDay') || msg.includes('per_day')) return true
+    } catch {
+      // ignore parse errors
+    }
+    return false
+  }
+
+  // Fix 5: Calculate ms until next midnight UTC for daily exhausted keys
+  private msUntilMidnightUTC(): number {
+    const now = new Date()
+    const midnight = new Date()
+    midnight.setUTCHours(24, 0, 0, 0)
+    return midnight.getTime() - now.getTime()
+  }
+
   getHealthyKey(): APIKey | null {
     const now = Date.now()
-    
-    // Reset daily counters if needed
+
     this.apiKeys.forEach(key => {
+      // Reset daily counters if 24h have passed
       if (now - key.lastDailyReset >= 24 * 60 * 60 * 1000) {
         key.dailyRequestCount = 0
         key.lastDailyReset = now
       }
+
+      // Fix 6: Lift daily exhaustion flag after midnight reset
+      if (key.dailyExhausted && key.dailyExhaustedUntil > 0 && now >= key.dailyExhaustedUntil) {
+        key.dailyExhausted = false
+        key.dailyExhaustedUntil = 0
+        key.isHealthy = true
+        key.errorCount = 0
+        console.log(`Key ${key.id} daily quota reset, re-enabling`)
+      }
     })
 
-    // Find healthy keys that haven't hit rate limits
     const availableKeys = this.apiKeys.filter(key => {
+      if (key.permanentlyDisabled) return false   // Fix 7: never use permanently disabled keys
       if (!key.isHealthy) return false
+      if (key.dailyExhausted) return false        // Fix 8: skip daily-exhausted keys
       if (key.dailyRequestCount >= this.rateLimitConfig.requestsPerDay) return false
       if (key.rateLimitResetTime > now) return false
-      
-      // Check minute-based rate limit
+
       const minuteWindow = 60 * 1000
       const recentRequests = key.requestCount
       if (recentRequests >= this.rateLimitConfig.requestsPerMinute) {
         if (now - key.lastUsed < minuteWindow) return false
       }
-      
+
       return true
     })
 
     if (availableKeys.length === 0) {
       console.warn('No available keys, checking for keys past cooldown...')
-      // If no keys available, find the one that's been waiting longest
       const waitingKeys = this.apiKeys
-        .filter(key => key.isHealthy)
+        .filter(key => key.isHealthy && !key.permanentlyDisabled && !key.dailyExhausted)
         .sort((a, b) => a.lastUsed - b.lastUsed)
-      
+
       return waitingKeys[0] || null
     }
 
-    // Use round-robin among available keys
     const keyIndex = this.currentKeyIndex % availableKeys.length
     this.currentKeyIndex = (this.currentKeyIndex + 1) % availableKeys.length
-    
+
     return availableKeys[keyIndex]
   }
 
@@ -100,7 +142,7 @@ export class APIKeyManager {
     maxRetries = 3
   ): Promise<T> {
     let lastError: Error | null = null
-    
+
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       const key = this.getHealthyKey()
       if (!key) {
@@ -111,29 +153,32 @@ export class APIKeyManager {
       try {
         const genAI = new GoogleGenerativeAI(key.key)
         const result = await operation(genAI)
-        
-        // Update key usage stats on success
         this.updateKeyStats(key, true)
         return result
-        
+
       } catch (error: any) {
         lastError = error
         console.error(`API call failed with key ${key.id}:`, error.message)
-        
-        // Update key stats on failure
         this.updateKeyStats(key, false)
-        
-        // Handle different error types
+
         if (error.status === 429) {
-          // Rate limit hit
-          key.rateLimitResetTime = Date.now() + this.rateLimitConfig.cooldownTime
-          console.log(`Key ${key.id} rate limited, cooling down`)
-        } else if (error.status === 401 || error.status === 403) {
-          // Auth error - disable key
+          if (this.isDailyQuotaExhausted(error)) {
+            // Fix 9: Mark as daily-exhausted, not just a short cooldown
+            key.dailyExhausted = true
+            key.dailyExhaustedUntil = Date.now() + this.msUntilMidnightUTC()
+            key.isHealthy = false
+            console.warn(`Key ${key.id} daily quota exhausted, disabling until midnight UTC`)
+          } else {
+            // Per-minute rate limit — short cooldown only
+            key.rateLimitResetTime = Date.now() + this.rateLimitConfig.cooldownTime
+            console.log(`Key ${key.id} rate limited, cooling down`)
+          }
+        } else if (error.status === 403 || error.status === 401) {
+          // Fix 10: Permanently disable leaked/invalid keys, never health-check again
           key.isHealthy = false
-          console.error(`Key ${key.id} disabled due to auth error`)
+          key.permanentlyDisabled = true
+          console.error(`Key ${key.id} permanently disabled due to auth error (${error.status})`)
         } else if (error.status >= 500) {
-          // Server error - temporary issue
           console.log(`Server error with key ${key.id}, will retry`)
         }
       }
@@ -147,14 +192,13 @@ export class APIKeyManager {
     key.lastUsed = now
     key.requestCount++
     key.dailyRequestCount++
-    
+
     if (!success) {
       key.errorCount++
-      
-      // Disable key if error rate is too high
+
       if (key.errorCount > 10 && key.requestCount > 0) {
         const errorRate = key.errorCount / key.requestCount
-        if (errorRate > 0.5) {
+        if (errorRate > 0.5 && !key.permanentlyDisabled) {
           key.isHealthy = false
           console.warn(`Key ${key.id} disabled due to high error rate: ${(errorRate * 100).toFixed(1)}%`)
         }
@@ -164,62 +208,72 @@ export class APIKeyManager {
 
   private async waitForAvailableKey(timeout = 30000): Promise<void> {
     const startTime = Date.now()
-    
+
     while (Date.now() - startTime < timeout) {
       const key = this.getHealthyKey()
       if (key) return
-      
-      // Wait 1 second before checking again
       await new Promise(resolve => setTimeout(resolve, 1000))
     }
-    
+
     throw new Error('Timeout waiting for available API key')
   }
 
-  // Health check method to re-enable keys
   private async performHealthCheck(): Promise<void> {
-    const disabledKeys = this.apiKeys.filter(key => !key.isHealthy)
-    
-    for (const key of disabledKeys) {
+    // Fix 11: Only health-check keys that are unhealthy but NOT permanently disabled or daily-exhausted
+    const recoverableKeys = this.apiKeys.filter(
+      key => !key.isHealthy && !key.permanentlyDisabled && !key.dailyExhausted
+    )
+
+    for (const key of recoverableKeys) {
       try {
         const genAI = new GoogleGenerativeAI(key.key)
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
-        
-        // Simple test request
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
         await model.generateContent("Hello")
-        
-        // If successful, re-enable key
+
         key.isHealthy = true
         key.errorCount = 0
         key.requestCount = 0
         console.log(`Key ${key.id} re-enabled after health check`)
-        
-      } catch (error) {
-        console.log(`Key ${key.id} still unhealthy:`, error)
+
+      } catch (error: any) {
+        // Fix 12: If health check itself returns 403, permanently disable immediately
+        if (error.status === 403 || error.status === 401) {
+          key.permanentlyDisabled = true
+          console.error(`Key ${key.id} permanently disabled during health check (${error.status})`)
+        } else {
+          console.log(`Key ${key.id} still unhealthy:`, error)
+        }
       }
     }
   }
 
-  // Start periodic health checks
   private startHealthChecks() {
     setInterval(() => {
       this.performHealthCheck()
-    }, 5 * 60 * 1000) // Every 5 minutes
+    }, 5 * 60 * 1000)
   }
 
-  // Health monitoring methods
   getKeyStats() {
     return this.apiKeys.map(key => ({
       id: key.id,
       isHealthy: key.isHealthy,
+      permanentlyDisabled: key.permanentlyDisabled,
+      dailyExhausted: key.dailyExhausted,
+      dailyExhaustedUntil: key.dailyExhaustedUntil
+        ? new Date(key.dailyExhaustedUntil).toISOString()
+        : null,
       requestCount: key.requestCount,
       errorCount: key.errorCount,
       dailyRequestCount: key.dailyRequestCount,
-      errorRate: key.requestCount > 0 ? (key.errorCount / key.requestCount * 100).toFixed(1) + '%' : '0%'
+      errorRate: key.requestCount > 0
+        ? (key.errorCount / key.requestCount * 100).toFixed(1) + '%'
+        : '0%'
     }))
   }
 
   getHealthyKeyCount(): number {
-    return this.apiKeys.filter(key => key.isHealthy).length
+    return this.apiKeys.filter(
+      key => key.isHealthy && !key.permanentlyDisabled && !key.dailyExhausted
+    ).length
   }
 }
