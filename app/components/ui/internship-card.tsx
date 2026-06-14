@@ -49,9 +49,8 @@ const InternshipCard = () => {
           <div>
             <p className="text-foreground text-sm font-medium">Duration</p>
             <p className="text-muted-foreground text-sm">
-              Summer 2026 (May–July) <br /> 
-              + Part-time/Remote opportunities <br /> 
-              + 1 month free (Mid-Dec to Mid-Jan)
+              Summer 2027 (May–July) <br /> 
+              + Full-time/Remote opportunities <br /> 
             </p>
           </div>
         </div>
@@ -60,7 +59,7 @@ const InternshipCard = () => {
           <div>
             <p className="text-foreground text-sm font-medium">Location</p>
             <p className="text-muted-foreground text-sm">
-              Remote / Hybrid <br />
+              Onsite / Hybrid <br />
               (Gurgaon or Bangalore preferred) 🇮🇳
             </p>
           </div>

@@ -139,7 +139,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ name, age, location, title, c
 
 export const profileData: ProfileCardProps = {
   name: "Ansh Agrawal",
-  age: 20,
+  age: 21,
   location: "Gurgaon, Haryana, IN",
   title: "Full-Stack Developer",
   company: "AI/ML + SaaS Enthusiast",

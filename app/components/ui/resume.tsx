@@ -8,7 +8,7 @@ export function Resume() {
     title: "Ansh Agrawal's Resume",
     description: "Full Stack Developer • AI Enthusiast",
     fileType: "PDF",
-    lastUpdated: "March 2026",
+    lastUpdated: "June 2026",
     fileSize: "0.8 MB",
     previewImageSrc: "/resume_ansh_preview.png",
     downloadUrl: "/ANSH-AGRAWAL-CV.pdf",

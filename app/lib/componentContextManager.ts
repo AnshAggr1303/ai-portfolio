@@ -59,8 +59,16 @@ Context: Fun section showing real-life adventures and crazy bits.
       case "profile":
         return `
 Component Context: Displayed profile details:
-- Student @ MUJ, CSE 3rd year
-- From Gurgaon, 8+ CGPA
+- Student @ MUJ, CSE 4th year
+- From Gurgaon, India
+- Tech passions: Full-stack, GenAI, startups
+- Personal vibe: Techie by day, trekker by heart
+
+User Query: "${componentContext.userQuery}"
+Component Status: ${componentContext.shown ? 'Displayed successfully' : 'Tried but failed'}
+
+PROFILE CONTEXT:
+- Academic track and location
 - Into full-stack, GenAI, adventures
 - Hobbies: Cricket, basketball, chess, pool, TT, gaming (console > mobile), car lover 🏎️
 
@@ -120,9 +128,9 @@ Component Status: ${componentContext.shown ? 'Displayed successfully' : 'Tried b
       projects: "**10+ projects** in my arsenal! My favs? **Study Buddy**, **Exam Guard**, and **Aarogya AI**. Wanna dive into one?",
       skills: "My toolkit's sharp – **React, Python, Gemini, Supabase, Flutter**, and more! What tech are you into?",
       fun: "Bro, that **Kedarnath trek** (22 km uphill madness) changed me. And Goa? Beaches + scooty = unbeatable vibe. You into adventure?",
-      profile: "**Techie by day, trekker by heart.** Gurgaon boy, 20 y/o, living dev life with 10+ projects and no regrets 😎 What about you?",
+      profile: "**Techie by day, trekker by heart.** Gurgaon boy, 21 y/o, living dev life with 10+ projects and no regrets 😎 What about you?",
       contact: "Reach out on **LinkedIn, GitHub, or email** – I reply faster than a CI/CD pipeline deploys.",
-      internship: "**Summer 2026 ready!** Full-stack, GenAI, product roles – send ‘em my way!",
+      internship: "**Summer 2027 ready!** Full-stack, GenAI, product roles – send ‘em my way!",
       resume: "**Updated resume** is one click away. Curious about anything specific inside?"
     }
 

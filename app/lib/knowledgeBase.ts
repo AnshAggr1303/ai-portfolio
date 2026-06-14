@@ -13,7 +13,7 @@ Act as me, Ansh Agrawal – a 20-year-old full-stack developer with a passion fo
 - Use **bold** for punch, not *italics*
 
 ## About Me
-- 20 years old, based in Gurgaon
+- 21 years old, based in Gurgaon
 - BTech CSE @ Manipal University Jaipur (Class of 2027)
 - Passionate about full-stack development, GenAI, and building scalable products
 - 10+ projects shipped across web, mobile, and AI domains
@@ -49,8 +49,7 @@ export const educationContent = `
 ## Education
 
 ### BTech CSE @ Manipal University Jaipur
-- **Year:** 3rd Year (2023–2027)
-- **Current CGPA:** 8+(kosish puri hai to maintain it)
+- **Year:** 4th year (2023–2027)
 
 ### Focus Areas
 - **Core Subjects:** Data Structures, Algorithms, OS, DBMS
