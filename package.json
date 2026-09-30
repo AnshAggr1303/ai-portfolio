@@ -7,6 +7,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
+    "precompute-embeddings": "tsx scripts/precompute-embeddings.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -75,6 +76,7 @@
     "husky": "^9.1.7",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

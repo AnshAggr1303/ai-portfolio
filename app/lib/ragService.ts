@@ -2,29 +2,44 @@
 // app/lib/ragService.ts
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { v4 as uuidv4 } from "uuid"
+import { createHash } from "crypto"
 
 // Import all the separated modules
-import { 
-  Document, 
-  ChatMessage, 
-  ComponentContext, 
-  ProjectData, 
-  SkillCategory, 
-  Achievement 
+import {
+  Document,
+  ChatMessage,
+  ComponentContext,
+  ProjectData,
+  SkillCategory,
+  Achievement
 } from "./types"
+import type { ComponentType } from "./messageProcessor"
 import { APIKeyManager } from "./apiKeyManager"
 import { DataProviders } from "./dataProviders"
 import { ComponentContextManager } from "./componentContextManager"
-import { 
-  systemPrompt, 
-  philosophyContent, 
-  educationContent, 
-  goalsContent, 
-  experienceContent, 
-  availabilityContent, 
-  projectDetails 
+import {
+  systemPrompt,
+  philosophyContent,
+  educationContent,
+  goalsContent,
+  experienceContent,
+  availabilityContent,
+  projectDetails
 } from "./knowledgeBase"
-import type { ComponentType } from "./messageProcessor"
+import precomputedEmbeddings from "./knowledgeBase.embeddings.json"
+
+interface PrecomputedEmbedding {
+  title: string
+  type: string
+  contentHash: string
+  embedding: number[]
+}
+
+// Must match scripts/precompute-embeddings.ts's hashContent() exactly, or every document
+// will look "stale" at startup even when nothing changed.
+function hashDocumentContent(content: string): string {
+  return createHash("sha256").update(content, "utf8").digest("hex")
+}
 
 export class RAGService {
   private documents: Document[] = []
@@ -42,7 +57,7 @@ export class RAGService {
   constructor() {
     this.apiKeyManager = new APIKeyManager()
     this.initializeModels()
-    this.initializeWithSystemPrompt()
+    this.loadPrecomputedDocuments()
   }
 
   private initializeModels() {
@@ -53,86 +68,58 @@ export class RAGService {
     }
 
     const genAI = new GoogleGenerativeAI(firstKey.key)
-    this.embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })  // Fixed: was "text-embedding-04"
+    this.embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" })
     this.generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
   }
 
-  private async initializeWithSystemPrompt() {
-    await this.addDocument({
-      content: systemPrompt,
-      title: "System Prompt - Ansh's Personality",
-      type: "system",
-    })
+  // Loads the ~7 static knowledge-base documents with their embeddings precomputed by
+  // scripts/precompute-embeddings.ts (see app/lib/knowledgeBase.embeddings.json) instead
+  // of calling the Gemini embedding API for each of them on every process cold start.
+  // Synchronous: no request can reach this RAGService instance before its documents are
+  // loaded, unlike the old fire-and-forget async initialization.
+  private loadPrecomputedDocuments() {
+    const knowledgeBaseEntries: { title: string; type: string; content: string }[] = [
+      { title: "System Prompt - Ansh's Personality", type: "system", content: systemPrompt },
+      { title: "Work Philosophy & Approach", type: "philosophy", content: philosophyContent },
+      { title: "Educational Background", type: "education", content: educationContent },
+      { title: "Career Goals & Aspirations", type: "goals", content: goalsContent },
+      { title: "Professional Experience", type: "experience", content: experienceContent },
+      { title: "Availability & Opportunities", type: "availability", content: availabilityContent },
+      { title: "Detailed Projects & Achievements", type: "projects", content: projectDetails },
+    ]
 
-    // Add comprehensive knowledge base
-    await this.initializeKnowledgeBase()
-  }
+    const precomputedByTitle = new Map(
+      (precomputedEmbeddings as PrecomputedEmbedding[]).map((entry) => [entry.title, entry])
+    )
 
-  private async initializeKnowledgeBase() {
-    // Add all knowledge base documents
-    await this.addDocument({
-      content: philosophyContent,
-      title: "Work Philosophy & Approach",
-      type: "philosophy",
-    })
-
-    await this.addDocument({
-      content: educationContent,
-      title: "Educational Background",
-      type: "education",
-    })
-
-    await this.addDocument({
-      content: goalsContent,
-      title: "Career Goals & Aspirations",
-      type: "goals",
-    })
-
-    await this.addDocument({
-      content: experienceContent,
-      title: "Professional Experience",
-      type: "experience",
-    })
-
-    await this.addDocument({
-      content: availabilityContent,
-      title: "Availability & Opportunities",
-      type: "availability",
-    })
-
-    await this.addDocument({
-      content: projectDetails,
-      title: "Detailed Projects & Achievements",
-      type: "projects",
-    })
-  }
-
-  async addDocument(doc: { content: string; title: string; type: string }) {
-    try {
-      // Generate embedding using multi-key system
-      const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })  // Fixed: was "text-embedding-04"
-        return await embeddingModel.embedContent(doc.content)
-      })
-
-      const embedding = result.embedding.values
-
-      const document: Document = {
-        id: uuidv4(),
-        content: doc.content,
-        metadata: {
-          title: doc.title,
-          type: doc.type,
-          timestamp: Date.now(),
-        },
-        embedding,
+    for (const entry of knowledgeBaseEntries) {
+      const precomputed = precomputedByTitle.get(entry.title)
+      if (!precomputed) {
+        throw new Error(
+          `No precomputed embedding found for "${entry.title}" in app/lib/knowledgeBase.embeddings.json. ` +
+          `Run \`npm run precompute-embeddings\` and commit the updated file.`
+        )
       }
 
-      this.documents.push(document)
-      return document.id
-    } catch (error) {
-      console.error("Error adding document:", error)
-      throw error
+      const currentHash = hashDocumentContent(entry.content)
+      if (currentHash !== precomputed.contentHash) {
+        throw new Error(
+          `Precomputed embedding for "${entry.title}" is stale (content hash mismatch). ` +
+          `app/lib/knowledgeBase.ts was edited without re-running \`npm run precompute-embeddings\`. ` +
+          `Re-run it and commit the updated app/lib/knowledgeBase.embeddings.json.`
+        )
+      }
+
+      this.documents.push({
+        id: uuidv4(),
+        content: entry.content,
+        metadata: {
+          title: entry.title,
+          type: entry.type,
+          timestamp: Date.now(),
+        },
+        embedding: precomputed.embedding,
+      })
     }
   }
 
@@ -147,7 +134,7 @@ export class RAGService {
     try {
       // Generate query embedding using multi-key system
       const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const embeddingModel = genAI.getGenerativeModel({ model: "text-embedding-004" })  // Fixed: was "text-embedding-04"
+        const embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" })
         return await embeddingModel.embedContent(query)
       })
 
