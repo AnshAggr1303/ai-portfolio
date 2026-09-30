@@ -36,95 +36,58 @@ const PROJECT_CONTENT: ProjectProps[] = [
     ],
   },
   {
-    title: "DATAI",
+    title: "ReconAI",
     description:
-      "A modern, AI-powered interface that allows users to query their database using natural language. Built with Next.js, TypeScript, Supabase, and Gemini AI for real-time data visualization.",
-    techStack: [
-      "Next.js",
-      "TypeScript",
-      "Google Gemini",
-      "Supabase",
-      "PostgreSQL",
-      "Tailwind CSS",
-      "Recharts",
-      "Lucide",
-    ],
-    date: "2025",
+      "An AI-powered payment reconciliation engine built for the Razorpay Buildathon. A 5-stage pipeline matches orders against bank settlements — deterministic rules first (fee deductions, rounding, missing IDs), LLM fallback only for ambiguous cases — reaching 100% precision and recall against hidden ground truth. Redesigned as a crash-safe, two-pass batch pipeline with database-level claim locking after diagnosing a race condition causing duplicate settlement claims.",
+    techStack: ["Python", "FastAPI", "LangGraph", "PostgreSQL", "Supabase", "Next.js", "TypeScript"],
+    date: "2026",
     links: [
       {
         name: "GitHub",
-        url: "https://github.com/AnshAggr1303/DATAI",
-      },
-      {
-        name: "Live Demo",
-        url: "https://dat-ai.netlify.app",
+        url: "https://github.com/AnshAggr1303/finance-controller",
       },
     ],
     images: [
-      { src: "/datai-1.png", alt: "DATAI Query Interface" },
-      { src: "/datai-2.png", alt: "DATAI Query Processing" },
-      { src: "/datai-3.png", alt: "DATAI Data Visualization" },
+      { src: "/reconai-1.png", alt: "ReconAI Screenshot 1" },
+      { src: "/reconai-2.png", alt: "ReconAI Screenshot 2" },
+      { src: "/reconai-3.png", alt: "ReconAI Screenshot 3" },
     ],
   },
   {
-    title: "Aarogya AI",
+    title: "FloatChat",
     description:
-      "A multilingual, voice-enabled chatbot using LLaMA, FAISS, Vosk, and LangChain. Supports speech/text interaction with contextual vector retrieval.",
-    techStack: ["Python", "LLaMA LLM", "FAISS", "Fasttext", "FastAPI", "LangChain", "VOSK", "React", "AWS"],
-    date: "2025",
+      "A natural-language analytics tool over ARGO oceanographic float data, built for Smart India Hackathon (cleared the internal round). A router sends simple questions to text-to-SQL generation and complex spatial queries to tool orchestration, reaching 95% query success. Geospatial data is stored in PostgreSQL/PostGIS with interactive Plotly/Streamlit dashboards for exploring results.",
+    techStack: ["Python", "FastAPI", "PostgreSQL", "PostGIS", "LangChain", "ChromaDB", "Groq", "Streamlit", "Plotly"],
+    date: "2026",
     links: [
       {
         name: "GitHub",
-        url: "https://github.com/AnshAggr1303/HackerzStreet-25",
+        url: "https://github.com/AnshAggr1303/FloatChat",
       },
     ],
     images: [
-      { src: "/aarogya-ai-1.jpeg", alt: "Aarogya AI Multilingual Chat Interface" },
-      { src: "/aarogya-ai-2.png", alt: "Aarogya AI Voice Permission Dialog" },
-      { src: "/aarogya-ai-3.png", alt: "Aarogya AI Backend Code Implementation" },
+      { src: "/floatchat-1.png", alt: "FloatChat Screenshot 1" },
+      { src: "/floatchat-2.png", alt: "FloatChat Screenshot 2" },
+      { src: "/floatchat-3.png", alt: "FloatChat Screenshot 3" },
     ],
   },
   {
-    title: "Exam Guard",
+    title: "Smart Inventory",
     description:
-      "AI-based cheating detection system for online and offline exams using computer vision and behavior analysis. Integrated with the college website.",
-    techStack: [
-      "Python",
-      "TensorFlow/Keras",
-      "OpenCV",
-      "YOLO",
-      "FastAPI",
-      "Flask",
-      "DeepSpeech",
-      "PostgreSQL",
-      "React.js",
-    ],
-    date: "2025",
-    links: [],
-    images: [
-      { src: "/exam-guard-1.jpeg", alt: "Exam Guard Real-time Detection System", aspectRatio: "video" },
-      { src: "/exam-guard-2.png", alt: "Exam Guard Upload and Live Alerts Dashboard", aspectRatio: "wide" },
-      { src: "/exam-guard-3.png", alt: "Exam Guard Analytics and Alert Distribution", aspectRatio: "wide" },
-    ],
-  },
-  {
-    title: "MUJeats",
-    description:
-      "A modern and visually appealing Food Ordering App UI built using Flutter. This project focuses on crafting a seamless and clean user interface for a food delivery application.",
-    techStack: ["Flutter", "Dart", "Material Design"],
-    date: "2025",
+      "An AI-powered inventory management platform for SMBs with a ledger-based stock model enforced by PostgreSQL triggers and atomic transactions. Automates stock entry via OCR bill scanning (Tesseract.js + Gemini Vision) and runs three background agents — reorder, shrinkage, demand forecasting — via Vercel Cron with human approval. User API keys are secured with AES-256-GCM encryption (BYOK).",
+    techStack: ["Next.js", "TypeScript", "PostgreSQL", "Supabase", "Tesseract.js", "Gemini Vision", "Vercel Cron"],
+    date: "2026",
     links: [
       {
         name: "GitHub",
-        url: "https://github.com/AnshAggr1303/food-ordering-app-UI",
+        url: "https://github.com/AnshAggr1303/smart-inventory",
       },
     ],
     images: [
-      { src: "/mujeats-1.jpeg", alt: "MUJeats Home Screen" },
-      { src: "/mujeats-2.jpeg", alt: "MUJeats Menu Screen" },
-      { src: "/mujeats-3.jpeg", alt: "MUJeats Order Tracking" },
+      { src: "/smart-inventory-1.png", alt: "Smart Inventory Screenshot 1" },
+      { src: "/smart-inventory-2.png", alt: "Smart Inventory Screenshot 2" },
+      { src: "/smart-inventory-3.png", alt: "Smart Inventory Screenshot 3" },
     ],
-    isMobile: true,
   },
 ]
 
@@ -260,27 +223,21 @@ export const data = [
     content: <ProjectContent project={{ title: "Study Buddy" }} />,
   },
   {
+    category: "FinTech AI",
+    title: "ReconAI",
+    src: "/reconai-main.png",
+    content: <ProjectContent project={{ title: "ReconAI" }} />,
+  },
+  {
+    category: "Data Analytics",
+    title: "FloatChat",
+    src: "/floatchat-main.png",
+    content: <ProjectContent project={{ title: "FloatChat" }} />,
+  },
+  {
     category: "SaaS",
-    title: "DATAI",
-    src: "/datai-main.png",
-    content: <ProjectContent project={{ title: "DATAI" }} />,
-  },
-  {
-    category: "Health AI",
-    title: "Aarogya AI",
-    src: "/aarogya-ai-main.png",
-    content: <ProjectContent project={{ title: "Aarogya AI" }} />,
-  },
-  {
-    category: "Proctoring",
-    title: "Exam Guard",
-    src: "/exam-guard-main.jpeg",
-    content: <ProjectContent project={{ title: "Exam Guard" }} />,
-  },
-  {
-    category: "UI/UX",
-    title: "MUJeats",
-    src: "/mujeats-main.jpeg",
-    content: <ProjectContent project={{ title: "MUJeats" }} />,
+    title: "Smart Inventory",
+    src: "/smart-inventory-main.png",
+    content: <ProjectContent project={{ title: "Smart Inventory" }} />,
   },
 ]
