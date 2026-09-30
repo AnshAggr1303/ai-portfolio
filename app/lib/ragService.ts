@@ -27,6 +27,7 @@ import {
   projectDetails
 } from "./knowledgeBase"
 import precomputedEmbeddings from "./knowledgeBase.embeddings.json"
+import { GEMINI_CHAT_MODEL, GEMINI_EMBEDDING_MODEL } from "./geminiModels"
 
 interface PrecomputedEmbedding {
   title: string
@@ -68,8 +69,8 @@ export class RAGService {
     }
 
     const genAI = new GoogleGenerativeAI(firstKey.key)
-    this.embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" })
-    this.generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+    this.embeddingModel = genAI.getGenerativeModel({ model: GEMINI_EMBEDDING_MODEL })
+    this.generativeModel = genAI.getGenerativeModel({ model: GEMINI_CHAT_MODEL })
   }
 
   // Loads the ~7 static knowledge-base documents with their embeddings precomputed by
@@ -134,7 +135,7 @@ export class RAGService {
     try {
       // Generate query embedding using multi-key system
       const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-001" })
+        const embeddingModel = genAI.getGenerativeModel({ model: GEMINI_EMBEDDING_MODEL })
         return await embeddingModel.embedContent(query)
       })
 
@@ -242,7 +243,7 @@ Instructions:
 
     // Generate response using multi-key system
     const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-      const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      const generativeModel = genAI.getGenerativeModel({ model: GEMINI_CHAT_MODEL })
       return await generativeModel.generateContent(prompt)
     })
 
@@ -322,7 +323,7 @@ Instructions:
 
       // Generate response using multi-key system
       const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+        const generativeModel = genAI.getGenerativeModel({ model: GEMINI_CHAT_MODEL })
         return await generativeModel.generateContent(prompt)
       })
 
