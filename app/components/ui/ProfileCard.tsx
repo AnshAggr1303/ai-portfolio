@@ -143,7 +143,7 @@ export const profileData: ProfileCardProps = {
   location: "Gurgaon, Haryana, IN",
   title: "Full-Stack Developer",
   company: "AI/ML + SaaS Enthusiast",
-  bio: "Hey 👋\n\nI'm Ansh, a full-stack developer currently studying at Manipal University Jaipur. I'm passionate about AI, web technologies, and building innovative, scalable solutions. I've worked on exam proctoring systems, multilingual voice chatbots, and more.",
+  bio: "Hey 👋\n\nI'm Ansh, a full-stack developer currently studying at Manipal University Jaipur. I'm passionate about AI, web technologies, and building innovative, scalable solutions. I've built a production AI agent on AWS at Apollo Tyres, and placed in the top 13% of 8,300+ teams in the Amazon ML Challenge 2026.",
   tags: ["AI", "developer", "SaaS builder", "GGN"],
   profileImage: "/profile.png",
 }

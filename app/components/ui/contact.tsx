@@ -10,7 +10,7 @@ export function Contact() {
     social: [
       {
         name: "LinkedIn",
-        url: "https://linkedin.com/in/ansh-agrawal-dev",
+        url: "https://www.linkedin.com/in/anshagrawall/",
         icon: <Linkedin className="h-5 w-5" />,
       },
       {

@@ -8,18 +8,16 @@ export class ComponentContextManager {
       case "projects":
         return `
 Component Context: Displayed projects showcase:
-${componentContext.availableProjects?.map(p => `- ${p}`).join('\n') || '- Study Buddy\n- Aarogya AI\n- Exam Guard\n- DATAI\n- MUJeats\n- Agentic Chatbot System'}
+${componentContext.availableProjects?.map(p => `- ${p}`).join('\n') || '- Study Buddy\n- ReconAI\n- FloatChat\n- Smart Inventory'}
 
 User Query: "${componentContext.userQuery}"
 Component Status: ${componentContext.shown ? 'Displayed successfully' : 'Tried but failed'}
 
 PROJECT CONTEXT:
 - Study Buddy: Voice AI learning tool (6 months dev)
-- Aarogya AI: Multilingual chatbot using RAG
-- Exam Guard: AI cheat detection (1st prize @ MUJ)
-- DATAI: Natural language to database tool
-- MUJeats: Flutter food ordering UI
-- Agentic Chatbot System: 3rd place @ Assesli, got interview offer
+- ReconAI: AI-powered payment reconciliation engine, 100% precision/recall (Razorpay Buildathon)
+- FloatChat: Natural-language analytics over ARGO ocean float data (Smart India Hackathon)
+- Smart Inventory: AI-powered inventory management platform with OCR and background agents
 
 Context: User saw interactive project cards with tech badges and achievements.
         `
@@ -94,7 +92,7 @@ Context: User got clickable links to reach out on multiple platforms.
       case "internship":
         return `
 Component Context: Displayed internship availability:
-${componentContext.availability ? `- Availability: ${componentContext.availability}` : '- Summer 2026, part-time anytime'}
+${componentContext.availability ? `- Availability: ${componentContext.availability}` : '- Graduating June 2027, open to internships + full-time'}
 ${componentContext.interests?.map(i => `- Interest: ${i}`).join('\n') || '- Full-stack, GenAI, startup vibes'}
 
 User Query: "${componentContext.userQuery}"
@@ -125,12 +123,12 @@ Component Status: ${componentContext.shown ? 'Displayed successfully' : 'Tried b
 
   static getComponentFallbackResponse(componentContext: ComponentContext): string {
     const fallbacks = {
-      projects: "**10+ projects** in my arsenal! My favs? **Study Buddy**, **Exam Guard**, and **Aarogya AI**. Wanna dive into one?",
+      projects: "**10+ projects** in my arsenal! My favs? **Study Buddy**, **ReconAI**, and **FloatChat**. Wanna dive into one?",
       skills: "My toolkit's sharp – **React, Python, Gemini, Supabase, Flutter**, and more! What tech are you into?",
       fun: "Bro, that **Kedarnath trek** (22 km uphill madness) changed me. And Goa? Beaches + scooty = unbeatable vibe. You into adventure?",
       profile: "**Techie by day, trekker by heart.** Gurgaon boy, 21 y/o, living dev life with 10+ projects and no regrets 😎 What about you?",
       contact: "Reach out on **LinkedIn, GitHub, or email** – I reply faster than a CI/CD pipeline deploys.",
-      internship: "**Summer 2027 ready!** Full-stack, GenAI, product roles – send ‘em my way!",
+      internship: "**Graduating June 2027!** Open to SDE/AI internships and full-time roles – send ‘em my way!",
       resume: "**Updated resume** is one click away. Curious about anything specific inside?"
     }
 

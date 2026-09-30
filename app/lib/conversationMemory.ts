@@ -40,15 +40,11 @@ export class ConversationMemory {
       }
     },
     projects: {
-      // Fully ordered and matched
       featured: [
         "Study Buddy",
-        "Aarogya AI – Multilingual RAG Chatbot",
-        "Exam Guard – AI Cheat Detection",
-        "DATAI – Natural Language to DB",
-        "MUJeats – Food Ordering App (UI)",
-        "Agentic Chatbot System (Assesli)",
-        "Helping Vision"
+        "ReconAI",
+        "FloatChat",
+        "Smart Inventory"
       ],
       details: {
         "study_buddy": {
@@ -57,48 +53,30 @@ export class ConversationMemory {
           impact: "Helped 200+ students improve study efficiency",
           tech: "Next.js, Supabase, Gemini AI, STT"
         },
-        "aarogya_ai": {
-          description: "Multilingual RAG chatbot for health assistance",
-          duration: "4 months development",
-          impact: "Handles 1000+ queries/day for NGO",
-          tech: "LLaMA, FAISS, FastAPI, VOSK, Python"
+        "recon_ai": {
+          description: "AI-powered payment reconciliation engine for the Razorpay Buildathon",
+          duration: "Buildathon project",
+          impact: "100% precision and recall against hidden ground truth",
+          tech: "Python, FastAPI, LangGraph, PostgreSQL, Supabase, Next.js"
         },
-        "exam_guard": {
-          description: "AI cheating detection system for online & offline exams",
-          duration: "2 months development",
-          impact: "Won 1st prize at MUJ hackathon",
-          tech: "YOLOv5, OpenCV, TensorFlow"
+        "floatchat": {
+          description: "Natural-language analytics tool over ARGO oceanographic float data",
+          duration: "Smart India Hackathon (cleared internal round)",
+          impact: "95% query success routing simple questions to text-to-SQL and complex ones to tool orchestration",
+          tech: "Python, FastAPI, PostgreSQL, PostGIS, LangChain, ChromaDB, Groq, Streamlit"
         },
-        "datai": {
-          description: "Natural language to database insights",
-          duration: "3 weeks build for hackathon",
-          impact: "Improved query handling and database accessibility",
-          tech: "Next.js, Supabase, Gemini AI, Recharts"
-        },
-        "mujeats": {
-          description: "Campus food ordering app UI",
-          duration: "2 weeks development",
-          impact: "User-friendly food ordering experience for MUJ students",
-          tech: "Flutter"
-        },
-        "agentic_chatbot_system": {
-          description: "Real-time voice chatbot with LLM integration",
-          duration: "Hackathon project",
-          impact: "3rd place in Assesli Hackathon + interview offer",
-          tech: "Gemini AI, Voice Integration, AWS"
-        },
-        "helping_vision": {
-          description: "Smart glasses for visually impaired",
-          duration: "Prototype stage",
-          impact: "Helped 50+ people in NGO testing phase",
-          tech: "Arduino, Ultrasonic Sensors, TTS"
+        "smart_inventory": {
+          description: "AI-powered inventory management platform for SMBs",
+          duration: "Ongoing development",
+          impact: "Automates stock entry via OCR and runs autonomous reorder/shrinkage/demand-forecasting agents",
+          tech: "Next.js, TypeScript, PostgreSQL, Supabase, Tesseract.js, Gemini Vision, Vercel Cron"
         }
       }
     },
     skills: {
       categories: ["Frontend", "Backend", "AI/ML", "Tools", "Databases"],
-      favorites: ["React", "Python", "Gemini AI", "YOLOv5", "OpenCV"],
-      expertise: "Frontend with React & Tailwind, AI/ML with Python + CV models"
+      favorites: ["React", "Python", "Gemini AI", "AWS", "LangGraph"],
+      expertise: "Frontend with React & Tailwind, AI/ML with Python + LLM agents"
     },
     experience: {
       hackathons: [
@@ -248,13 +226,3 @@ export class ConversationMemory {
     return context
   }
 }
-
-/*
-CHANGES MADE:
-1. Removed "Trade Sphere" from project list completely.
-2. Reordered `projects.featured` and `projects.details` so they match exactly.
-3. Added missing detailed entries for all featured projects.
-4. Updated skills favorites with latest stack.
-5. Updated adventures to match latest life experiences (Kedarnath + BITS Goa).
-6. Updated `experience` section to reflect all major hackathons + achievements.
-*/

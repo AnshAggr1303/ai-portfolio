@@ -88,9 +88,9 @@ export const handleComponentMessage = async (
         type: "projects",
         shown: true,
         userQuery: content,
-        availableProjects: ["Study Buddy", "RAG Chatbot", "AI Cheat Detection", "Helping Vision"]
+        availableProjects: ["Study Buddy", "ReconAI", "FloatChat", "Smart Inventory"]
       }
-      fallbackMessage = "Hope you liked what you saw! 🚀 Study Buddy is my baby - took 6 months but helped 200+ students. Which project caught your eye?"
+      fallbackMessage = "Hope you liked what you saw! 🚀 Study Buddy, ReconAI, and FloatChat are what I've been heads-down on lately. Which project caught your eye?"
       break
 
     case "skills":
@@ -141,10 +141,10 @@ export const handleComponentMessage = async (
         type: "internship",
         shown: true,
         userQuery: content,
-        availability: "Summer 2026, Part-time",
+        availability: "Graduating June 2027",
         interests: ["AI/ML", "Full-stack Development", "Startups"]
       }
-      fallbackMessage = "I'm actively looking for summer 2026 internships! What kind of role are you working on?"
+      fallbackMessage = "I'm graduating June 2027 and open to SDE/AI internships and full-time roles! What kind of role are you working on?"
       break
 
     case "more":

@@ -26,7 +26,7 @@ const InternshipCard = () => {
           </div>
           <div>
             <h2 className="text-foreground text-2xl font-semibold">Ansh Agrawal</h2>
-            <p className="text-muted-foreground text-sm">Summer Internship Application – 2026</p>
+            <p className="text-muted-foreground text-sm">Open to SDE / AI Internship & Full-Time Roles</p>
           </div>
         </div>
 
@@ -47,10 +47,10 @@ const InternshipCard = () => {
         <div className="flex items-start gap-3">
           <CalendarDays className="mt-1 h-5 w-5 text-blue-500" />
           <div>
-            <p className="text-foreground text-sm font-medium">Duration</p>
+            <p className="text-foreground text-sm font-medium">Availability</p>
             <p className="text-muted-foreground text-sm">
-              Summer 2027 (May–July) <br /> 
-              + Full-time/Remote opportunities <br /> 
+              Graduating June 2027 <br />
+              Open to SDE/AI internships + full-time roles <br />
             </p>
           </div>
         </div>
@@ -74,13 +74,13 @@ const InternshipCard = () => {
               <ul className="list-disc pl-4">
                 <li>Next.js, TypeScript, Tailwind CSS</li>
                 <li>Flutter, Supabase, PostgreSQL</li>
-                <li>Gemini, LLaMA, LangChain, Vosk</li>
-                <li>FastAPI, Flask, OpenCV, YOLO</li>
+                <li>Gemini, LangChain, FastAPI</li>
+                <li>AWS (Bedrock, Neptune, AgentCore), LangGraph</li>
               </ul>
               <ul className="list-disc pl-4">
                 <li>AI agents, RAG, Multilingual STT</li>
                 <li>Vector DBs, prompt engineering</li>
-                <li>Hackathons: MUJ, BITS Goa, IIT Kanpur</li>
+                <li>Hackathons: MUJ, BITS Goa, IIT Kanpur, Amazon ML Challenge</li>
                 <li>
                   <a
                     href="/chat?query=What%20are%20your%20skills%3F%20Give%20me%20a%20list%20of%20your%20soft%20and%20hard%20skills."
@@ -99,9 +99,10 @@ const InternshipCard = () => {
       <div className="mt-10">
         <p className="text-foreground mb-2 text-lg font-semibold">What I bring</p>
         <p className="text-foreground text-sm">
-          Real-world AI/ML experience building multilingual, voice-enabled systems, agentic chatbots, and smart
-          surveillance tools. <br /> 
-          2x Hackathon Winner with proven track record in fast prototyping. <br />
+          Real-world AI/ML experience building production AI agents on AWS, agentic voice assistants, and
+          natural-language data pipelines. <br />
+          Top 13% of 8,300+ teams in the Amazon ML Challenge 2026, and built ReconAI, a payment reconciliation
+          engine hitting 100% precision and recall against hidden ground truth. <br />
           Passionate about solving real problems with AI and shipping products that actually work.
         </p>
       </div>
