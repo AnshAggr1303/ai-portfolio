@@ -24,12 +24,20 @@ import {
   availabilityContent, 
   projectDetails 
 } from "./knowledgeBase"
+import type { ComponentType } from "./messageProcessor"
 
 export class RAGService {
   private documents: Document[] = []
   private embeddingModel: any
   private generativeModel: any
   private apiKeyManager: APIKeyManager
+
+  // One AI-personalized component follow-up is generated and cached per component TYPE
+  // on this RAGService singleton, so it's shared across every visitor hitting this warm
+  // server process instead of being regenerated per request. followUpPriming guards
+  // against concurrent requests for the same type each kicking off their own Gemini call.
+  private followUpCache: Map<ComponentType, string> = new Map()
+  private followUpPriming: Set<ComponentType> = new Set()
 
   constructor() {
     this.apiKeyManager = new APIKeyManager()
@@ -162,31 +170,69 @@ export class RAGService {
     }
   }
 
-  // Generate component-specific follow-up responses
+  // Generate component-specific follow-up responses. Always returns fast: the cached
+  // AI-personalized line for this component type if one exists yet, otherwise the
+  // hand-written fallback -- never blocks the request on a Gemini call. If nothing is
+  // cached yet, priming is kicked off in the background for next time.
   async generateComponentFollowUp(componentContext: ComponentContext, chatHistory: ChatMessage[] = []): Promise<string> {
-    try {
-      // Build component-specific context
-      let contextPrompt = ComponentContextManager.buildComponentContext(componentContext)
-      
-      // Retrieve relevant documents based on component type
-      const relevantDocs = await this.retrieveRelevantDocuments(
-        `${componentContext.type} ${componentContext.userQuery}`, 
-        3
-      )
+    const cached = this.followUpCache.get(componentContext.type)
+    if (cached) {
+      return cached
+    }
 
-      // Add document context
-      const docContext = relevantDocs
-        .map((doc) => `[${doc.metadata.title}]: ${doc.content}`)
-        .join("\n\n")
+    this.primeFollowUpCache(componentContext, chatHistory)
+    return ComponentContextManager.getComponentFallbackResponse(componentContext)
+  }
 
-      // Prepare chat history
-      const historyContext = chatHistory
-        .slice(-3)
-        .map((msg) => `${msg.role}: ${msg.content}`)
-        .join("\n")
+  // Fire-and-forget: generates the AI-personalized follow-up for this component type and
+  // caches it for every subsequent request, guarded so concurrent requests for the same
+  // type don't each trigger their own Gemini call.
+  private primeFollowUpCache(componentContext: ComponentContext, chatHistory: ChatMessage[]): void {
+    const type = componentContext.type
 
-      // Create enhanced prompt for component follow-up
-      const prompt = `
+    if (this.followUpCache.has(type) || this.followUpPriming.has(type)) {
+      return
+    }
+
+    this.followUpPriming.add(type)
+
+    this.buildComponentFollowUpText(componentContext, chatHistory)
+      .then((text) => {
+        if (text) {
+          this.followUpCache.set(type, text)
+        }
+      })
+      .catch((error) => {
+        console.error("Error priming component follow-up cache:", error)
+      })
+      .finally(() => {
+        this.followUpPriming.delete(type)
+      })
+  }
+
+  private async buildComponentFollowUpText(componentContext: ComponentContext, chatHistory: ChatMessage[]): Promise<string> {
+    // Build component-specific context
+    let contextPrompt = ComponentContextManager.buildComponentContext(componentContext)
+
+    // Retrieve relevant documents based on component type
+    const relevantDocs = await this.retrieveRelevantDocuments(
+      `${componentContext.type} ${componentContext.userQuery}`,
+      3
+    )
+
+    // Add document context
+    const docContext = relevantDocs
+      .map((doc) => `[${doc.metadata.title}]: ${doc.content}`)
+      .join("\n\n")
+
+    // Prepare chat history
+    const historyContext = chatHistory
+      .slice(-3)
+      .map((msg) => `${msg.role}: ${msg.content}`)
+      .join("\n")
+
+    // Create enhanced prompt for component follow-up
+    const prompt = `
 ${contextPrompt}
 
 Relevant Knowledge Base:
@@ -207,17 +253,13 @@ Instructions:
 - Show genuine enthusiasm about your work
       `
 
-      // Generate response using multi-key system
-      const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
-        return await generativeModel.generateContent(prompt)
-      })
+    // Generate response using multi-key system
+    const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
+      const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+      return await generativeModel.generateContent(prompt)
+    })
 
-      return result.response.text()
-    } catch (error) {
-      console.error("Error generating component follow-up:", error)
-      return ComponentContextManager.getComponentFallbackResponse(componentContext)
-    }
+    return result.response.text()
   }
 
   // ENHANCED: Generate response with full context support

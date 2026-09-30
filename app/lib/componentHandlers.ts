@@ -184,7 +184,10 @@ export const handleComponentMessage = async (
   // Update conversation memory
   ConversationMemory.updateComponentMemory(componentMessage)
 
-  // Get RAG follow-up after showing component
+  // Get follow-up after showing component. The /api/chat route (backed by RAGService's
+  // own per-component-type cache) responds fast either way -- a cached AI-personalized
+  // line or the fallback -- so this just uses whatever comes back, falling back to the
+  // local fallbackMessage only if the request itself fails.
   setTimeout(async () => {
     const ragResponse = await callRAGAPI(content, chatHistory, componentContext, 'component')
     const dynamicFollowUp = ragResponse || fallbackMessage
@@ -195,7 +198,7 @@ export const handleComponentMessage = async (
       content: dynamicFollowUp,
       timestamp: new Date(),
     }
-    
+
     setMessages((prev) => [...prev, followUpMessage])
     setIsLoading(false)
     processingRef.current.delete(content)
