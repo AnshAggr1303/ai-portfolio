@@ -10,8 +10,8 @@ export function Resume() {
     fileType: "PDF",
     lastUpdated: "June 2026",
     fileSize: "0.8 MB",
-    previewImageSrc: "/resume_ansh_preview.png",
-    downloadUrl: "/ANSH-AGRAWAL-CV.pdf",
+    previewImageSrc: "/Ansh_Agrawal_CV_P-1.png",
+    downloadUrl: "/Ansh_Agrawal_CV_P.pdf",
   }
 
   const handleDownload = () => {
