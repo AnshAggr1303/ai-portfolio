@@ -131,6 +131,42 @@ const cases: TestCase[] = [
         message: "I'm not big on climbing corporate hierarchies either", expectedIntent: "informational",
         note: "different phrasing than the exact 'climbing the corporate ladder' case -- checks whether the exclusion generalizes or is a narrow lookahead tied to that literal phrase"
     },
+
+    // --- More Options drawer: every item's exact `question` from app/constants/quickQuestions.ts ---
+    // recentComponent is deliberately unset. The "more" message is created without a
+    // componentContext (componentHandlers.ts), and getRecentComponentContext() only counts
+    // assistant messages with componentContext.shown, so a drawer tap sees no recent component
+    // unless the PREVIOUS tap produced a real one (see the matrix in the investigation, not here).
+    // Professional
+    { message: "Can I see your resume?", expectedIntent: "component", expectedComponent: "resume", note: "more:resume" },
+    { message: "Are you available for internships?", expectedIntent: "component", expectedComponent: "internship", note: "more:availability" },
+    { message: "What is your work philosophy and approach?", expectedIntent: "philosophical", note: "more:work-philosophy" },
+    { message: "What makes you a valuable team member?", expectedIntent: "informational", note: "more:team-value" },
+    // Achievements & Recognition
+    { message: "how many hackathon have you won?", expectedIntent: "informational", note: "more:hackathon-wins" },
+    { message: "What are your key achievements and awards?", expectedIntent: "informational", note: "more:achievements" },
+    { message: "What certifications do you have?", expectedIntent: "informational", note: "more:certifications" },
+    { message: "Show me your competition statistics", expectedIntent: "informational", note: "more:competition-stats" },
+    // Tech & Code
+    { message: "Show me a cool C code snippet of Fibonacci Sequence", expectedIntent: "informational", note: "more:favorite-code" },
+    { message: "What's your complete tech stack?", expectedIntent: "informational", note: "more:tech-stack" },
+    { message: "What are you currently learning?", expectedIntent: "informational", note: "more:learning" },
+    { message: "What are your favorite development tools?", expectedIntent: "informational", note: "more:favorite-tools" },
+    { message: "How did you get started in programming?", expectedIntent: "informational", note: "more:coding-journey" },
+    // Journey & Timeline
+    { message: "What are your key career milestones?", expectedIntent: "informational", note: "more:milestones" },
+    { message: "Where do you see yourself in 5 years?", expectedIntent: "informational", note: "more:5-years" },
+    { message: "What was your biggest professional challenge?", expectedIntent: "informational", note: "more:biggest-challenge" },
+    // Hobbies & Interests
+    { message: "What sports and gaming activities do you enjoy?", expectedIntent: "informational", note: "more:sports" },
+    { message: "Share some of your adventure stories and travels", expectedIntent: "component", expectedComponent: "fun", note: "more:adventures" },
+    { message: "Describe your passion for cars", expectedIntent: "informational", note: "more:cars-passion" },
+    { message: "List your other hobbies and interests", expectedIntent: "informational", note: "more:hobbies" },
+    // Quick Facts
+    { message: "Show me your quick professional stats", expectedIntent: "informational", note: "more:quick-stats" },
+    { message: "Tell me some fun facts about yourself", expectedIntent: "component", expectedComponent: "fun", note: "more:fun-facts (the Fun Facts quick button maps to the fun component)" },
+    { message: "What are your favorite frameworks and tools?", expectedIntent: "informational", note: "more:favorites" },
+    { message: "Describe your personality ", expectedIntent: "informational", note: "more:personality" },
 ]
 
 let pass = 0
