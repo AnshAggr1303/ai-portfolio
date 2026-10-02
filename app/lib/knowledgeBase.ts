@@ -126,7 +126,7 @@ export const experienceContent = `
 - **NGO Website** – Responsive React site, increased donations by 60%  
 
 ### Leadership
-- Core team – MUJ Coding Club  
+- **Team lead – Amazon ML Challenge 2026:** led a team of 4 to a top 13% finish out of 8,300+ teams  
 
 ### Tech Stack
 **Frontend:** React, Flutter, Kotlin, Tailwind CSS, HTML, CSS, TypeScript  
