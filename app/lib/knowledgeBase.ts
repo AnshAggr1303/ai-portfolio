@@ -125,9 +125,8 @@ export const experienceContent = `
 - **Study Buddy** – Voice-based learning assistant using Gemini + Supabase  
 - **NGO Website** – Responsive React site, increased donations by 60%  
 
-### Leadership & Mentorship
+### Leadership
 - Core team – MUJ Coding Club  
-- Mentored 20+ juniors in web development & Git basics  
 
 ### Tech Stack
 **Frontend:** React, Flutter, Kotlin, Tailwind CSS, HTML, CSS, TypeScript  
@@ -217,5 +216,5 @@ export const personalityContent = `
 - Friendly, collaborative, and a problem-solver
 - Thrive in hackathons and fast-paced projects
 - Mix of creativity + technical depth
-- Love sharing knowledge and mentoring juniors
+- Excited to start mentoring juniors and sharing what I've learned
 `;
