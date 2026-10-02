@@ -1,7 +1,7 @@
 // app/lib/apiKeyManager.ts
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { APIKey, RateLimitConfig } from "./types"
-import { GEMINI_CHAT_MODEL } from "./geminiModels"
+import { GEMINI_CHAT_MODEL, GEMINI_HEALTH_CHECK_CONFIG } from "./geminiModels"
 
 export class APIKeyManager {
   private apiKeys: APIKey[] = []
@@ -228,7 +228,10 @@ export class APIKeyManager {
     for (const key of recoverableKeys) {
       try {
         const genAI = new GoogleGenerativeAI(key.key)
-        const model = genAI.getGenerativeModel({ model: GEMINI_CHAT_MODEL })
+        const model = genAI.getGenerativeModel({
+          model: GEMINI_CHAT_MODEL,
+          generationConfig: GEMINI_HEALTH_CHECK_CONFIG,
+        })
         await model.generateContent("Hello")
 
         key.isHealthy = true

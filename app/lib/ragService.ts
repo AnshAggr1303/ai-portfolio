@@ -27,7 +27,12 @@ import {
   projectDetails
 } from "./knowledgeBase"
 import precomputedEmbeddings from "./knowledgeBase.embeddings.json"
-import { GEMINI_CHAT_MODEL, GEMINI_EMBEDDING_MODEL } from "./geminiModels"
+import {
+  GEMINI_CHAT_MODEL,
+  GEMINI_EMBEDDING_MODEL,
+  GEMINI_COMPONENT_FOLLOWUP_CONFIG,
+  GEMINI_RAG_RESPONSE_CONFIG,
+} from "./geminiModels"
 
 interface PrecomputedEmbedding {
   title: string
@@ -243,7 +248,10 @@ Instructions:
 
     // Generate response using multi-key system
     const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-      const generativeModel = genAI.getGenerativeModel({ model: GEMINI_CHAT_MODEL })
+      const generativeModel = genAI.getGenerativeModel({
+        model: GEMINI_CHAT_MODEL,
+        generationConfig: GEMINI_COMPONENT_FOLLOWUP_CONFIG,
+      })
       return await generativeModel.generateContent(prompt)
     })
 
@@ -314,7 +322,8 @@ Instructions:
 - If there's enhanced context about recently shown components, reference that information appropriately
 - For elaboration requests about components (like "craziest thing" after fun component), provide specific detailed stories
 - For philosophical questions (like "work philosophy"), give thoughtful personal responses
-- Always end with a follow-up question to keep the conversation going
+- Keep your answer under 150 words, even if the question asks for exhaustive detail -- pick the most interesting points and offer to go deeper
+- Always end with a short follow-up question to keep the conversation going
 - Use emojis sparingly but effectively
 - Use **bold text** for emphasis instead of *asterisks*
 - If you don't know something specific, just say so honestly
@@ -323,7 +332,10 @@ Instructions:
 
       // Generate response using multi-key system
       const result = await this.apiKeyManager.executeWithRetry(async (genAI) => {
-        const generativeModel = genAI.getGenerativeModel({ model: GEMINI_CHAT_MODEL })
+        const generativeModel = genAI.getGenerativeModel({
+          model: GEMINI_CHAT_MODEL,
+          generationConfig: GEMINI_RAG_RESPONSE_CONFIG,
+        })
         return await generativeModel.generateContent(prompt)
       })
 

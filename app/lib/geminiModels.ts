@@ -19,3 +19,26 @@ export const GEMINI_CHAT_MODEL = "gemini-3.5-flash-lite"
 // (RAGService.retrieveRelevantDocuments). These two call sites must always agree,
 // since embeddings from different models aren't comparable via cosine similarity.
 export const GEMINI_EMBEDDING_MODEL = "gemini-embedding-001"
+
+// Generation configs for the chat model, one per call site. Passed to
+// getGenerativeModel({ model, generationConfig }). Embedding calls take no
+// generationConfig, so none is defined for GEMINI_EMBEDDING_MODEL.
+
+// APIKeyManager's health-check ping -- only needs to confirm the key works.
+export const GEMINI_HEALTH_CHECK_CONFIG = {
+  maxOutputTokens: 10,
+}
+
+// Component follow-up lines (RAGService.buildComponentFollowUpText) -- the prompt asks
+// for 2-3 sentences, so this leaves some headroom above that.
+export const GEMINI_COMPONENT_FOLLOWUP_CONFIG = {
+  maxOutputTokens: 150,
+  temperature: 0.7,
+}
+
+// Regular RAG answers (RAGService.generateRegularResponse) -- a real answer needs more
+// room than a follow-up line.
+export const GEMINI_RAG_RESPONSE_CONFIG = {
+  maxOutputTokens: 300,
+  temperature: 0.7,
+}
