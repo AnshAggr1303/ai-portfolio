@@ -78,7 +78,8 @@ export async function POST(request: NextRequest) {
       message, 
       formattedHistory, 
       componentContext,
-      fullContext
+      fullContext,
+      intentType
     )
 
     return NextResponse.json({ response })

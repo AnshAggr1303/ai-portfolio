@@ -244,6 +244,8 @@ Instructions:
 - Use **bold text** for emphasis
 - Keep response to 2-3 sentences max
 - Show genuine enthusiasm about your work
+- Only state facts, numbers, or specifics explicitly present in the context above. If something isn't directly stated, speak about it in general terms rather than inventing detail -- never fabricate specifics about organizations, events, or achievements not mentioned in the source material
+- Match your tone to the strength of what you're actually asserting: don't open with confident affirmations when the claim that follows is partial or indirect
       `
 
     // Generate response using multi-key system
@@ -263,11 +265,17 @@ Instructions:
     query: string, 
     chatHistory: ChatMessage[] = [], 
     componentContext?: ComponentContext,
-    enhancedContext?: string
+    enhancedContext?: string,
+    intentType?: string
   ): Promise<string> {
     try {
-      // If component context is provided, use component-specific response
-      if (componentContext) {
+      // The cached component follow-up ignores the query entirely, so it may only answer
+      // the message that just showed the component (intent "component"). componentContext
+      // can be attached from stale conversation memory on any message (handleRAGResponse
+      // always sends the last-shown component), so its presence alone must never
+      // short-circuit a fresh informational/philosophical question, an elaboration request
+      // (which wants real detail, not the canned line), or one with no intent at all.
+      if (componentContext && intentType === "component") {
         return await this.generateComponentFollowUp(componentContext, chatHistory)
       }
 
@@ -326,6 +334,8 @@ Instructions:
 - Always end with a short follow-up question to keep the conversation going
 - Use emojis sparingly but effectively
 - Use **bold text** for emphasis instead of *asterisks*
+- Only state facts, numbers, or specifics explicitly present in the context above. If something isn't directly stated, speak about it in general terms rather than inventing detail -- never fabricate specifics about organizations, events, or achievements not mentioned in the source material
+- Match your tone to the strength of what you're actually asserting: don't open with confident affirmations ("Yeah, definitely!", "Absolutely!") when the claim that follows is partial or indirect
 - If you don't know something specific, just say so honestly
 - Keep responses conversational and engaging
       `

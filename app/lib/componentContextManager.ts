@@ -123,10 +123,10 @@ Component Status: ${componentContext.shown ? 'Displayed successfully' : 'Tried b
 
   static getComponentFallbackResponse(componentContext: ComponentContext): string {
     const fallbacks = {
-      projects: "**10+ projects** in my arsenal! My favs? **Study Buddy**, **ReconAI**, and **FloatChat**. Wanna dive into one?",
+      projects: "**A few projects I'm really proud of!** My favs? **Study Buddy**, **ReconAI**, and **FloatChat**. Wanna dive into one?",
       skills: "My toolkit's sharp – **React, Python, Gemini, Supabase, Flutter**, and more! What tech are you into?",
       fun: "Bro, that **Kedarnath trek** (22 km uphill madness) changed me. And Goa? Beaches + scooty = unbeatable vibe. You into adventure?",
-      profile: "**Techie by day, trekker by heart.** Gurgaon boy, 21 y/o, living dev life with 10+ projects and no regrets 😎 What about you?",
+      profile: "**Techie by day, trekker by heart.** Gurgaon boy, 21 y/o, living the dev life with no regrets 😎 What about you?",
       contact: "Reach out on **LinkedIn, GitHub, or email** – I reply faster than a CI/CD pipeline deploys.",
       internship: "**Graduating June 2027!** Open to SDE/AI internships and full-time roles – send ‘em my way!",
       resume: "**Updated resume** is one click away. Curious about anything specific inside?"

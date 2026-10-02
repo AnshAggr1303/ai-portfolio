@@ -112,7 +112,7 @@ export class DataProviders {
       {
         title: "3rd Place - Assesli Hackathon",
         date: "2025",
-        description: "Built real-time agentic chatbot system with voice pipeline",
+        description: "Built Study Buddy, a real-time voice-based agentic learning assistant",
         category: "Competition",
         impact: "Received interview offer from organizers",
       },
